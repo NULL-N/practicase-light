@@ -1,0 +1,50 @@
+# PractiCase CI — あなた自身のリポジトリの GitHub Actions 無料枠で動く。
+# secrets・外部サービス・有料 API は一切使わない。
+# 実行内容はローカルの正式コマンドと同じなので、CI が使えない環境(ZIP 運用など)でも
+# 学習は docs/02_作業ルール/workflow.md の手順どおりローカルだけで完結する。
+name: PractiCase check
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'reports/**'   # 報告書だけの変更ではテスト対象が変わらないため動かさない(無料枠の節約)
+  pull_request:
+    paths-ignore:
+      - 'reports/**'
+
+# 同じブランチで連続 push したとき、古い実行を打ち切って無料枠を守る
+concurrency:
+  group: practicase-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: アプリ起動と共通テスト
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: リポジトリを取得(scope 検査用に全履歴)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: アプリ環境を起動
+        run: docker compose up -d --build
+
+      - name: DB を初期化
+        run: docker compose exec -T app php tools/init-db.php
+
+      - name: 共通テストを実行(既存機能を壊していないか)
+        run: docker compose exec -T app php packs/php/app/tests/run.php
+
+      - name: セットアップ状態の確認(main への push 時のみ)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: docker compose exec -T app php tools/check.php T-000
+
+      - name: 環境を停止
+        if: always()
+        run: docker compose down

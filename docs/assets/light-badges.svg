@@ -1,0 +1,21 @@
+<svg viewBox="0 0 960 40" xmlns="http://www.w3.org/2000/svg">
+  <g font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="14" font-weight="600">
+    <rect x="0" y="4" width="96" height="28" rx="14" fill="#2d3f8f"/>
+    <text x="48" y="23" text-anchor="middle" fill="#ffffff">14 課題</text>
+
+    <rect x="108" y="4" width="88" height="28" rx="14" fill="#1b6fa8"/>
+    <text x="152" y="23" text-anchor="middle" fill="#ffffff">PHP 8.3</text>
+
+    <rect x="208" y="4" width="86" height="28" rx="14" fill="#0d6b58"/>
+    <text x="251" y="23" text-anchor="middle" fill="#ffffff">Docker</text>
+
+    <rect x="306" y="4" width="112" height="28" rx="14" fill="#7a4a9c"/>
+    <text x="362" y="23" text-anchor="middle" fill="#ffffff">SQL ドリル</text>
+
+    <rect x="430" y="4" width="118" height="28" rx="14" fill="#9c5a2a"/>
+    <text x="489" y="23" text-anchor="middle" fill="#ffffff">設計トレーニング</text>
+
+    <rect x="560" y="4" width="130" height="28" rx="14" fill="#2a7a4a"/>
+    <text x="625" y="23" text-anchor="middle" fill="#ffffff">無料・課金なし</text>
+  </g>
+</svg>

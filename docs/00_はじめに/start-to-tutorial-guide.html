@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>PractiCase 導入からチュートリアル2完了までの手順書</title>
+<style>
+body { font-family: "Yu Gothic UI", Meiryo, sans-serif; color: #222; line-height: 1.7; max-width: 860px; margin: 24px auto; padding: 0 16px; }
+h1 { font-size: 1.45rem; border-bottom: 2px solid #1f3a5f; padding-bottom: 6px; }
+h2 { font-size: 1.12rem; background: #eef1f5; padding: 7px 10px; margin-top: 28px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0 18px; }
+th, td { border: 1px solid #bbb; padding: 6px 9px; text-align: left; font-size: 0.92rem; vertical-align: top; }
+th { background: #f2f4f7; }
+code { background: #f0f2f5; padding: 1px 5px; border-radius: 3px; font-size: 0.9em; }
+pre { background: #f0f2f5; padding: 10px 12px; border-radius: 4px; overflow-x: auto; }
+ul, ol { padding-left: 22px; }
+.note { background: #eef4ff; border: 1px solid #cddcf5; border-radius: 5px; padding: 8px 12px; font-size: 0.92rem; }
+@media print { body { max-width: none; margin: 0; } h2 { page-break-after: avoid; } }
+</style>
+</head>
+<body>
+<h1>導入からチュートリアル2完了までの手順書</h1>
+
+<p class="note">この文書は、PractiCase を手元に用意してから <code>T-000</code>、<code>tutorial</code>、<code>tutorial-2</code> を終えるまでの一本道です。印刷するか、ブラウザの別ウィンドウで開いたまま進めてください。PDF保存する場合は Ctrl+P を使います。</p>
+
+<h2>完了の定義</h2>
+<table>
+<tr><th>項目</th><th>完了状態</th></tr>
+<tr><td>環境</td><td><code>docker compose up -d</code> でアプリが起動している</td></tr>
+<tr><td>DB</td><td><code>docker compose exec app php tools/init-db.php</code> を実行済み</td></tr>
+<tr><td>T-000</td><td><code>check T-000</code> が PASS、完了報告が <code>reports/</code> にある</td></tr>
+<tr><td>tutorial</td><td><code>check tutorial</code> が PASS、3行報告が <code>reports/</code> にある</td></tr>
+<tr><td>tutorial-2</td><td><code>check tutorial-2</code> が PASS、3行報告が <code>reports/</code> にある</td></tr>
+<tr><td>次の一歩</td><td><code>packs/php/tickets/02_開発の基礎/T-001_job_validation/ticket.md</code> を開ける状態</td></tr>
+</table>
+
+<h2>0. 使う場所を決める</h2>
+<p>作業は、必ず自分のコピーで行います。配布元や master 原本で課題を解かないでください。</p>
+<pre>git clone https://github.com/&lt;自分のアカウント&gt;/&lt;リポジトリ名&gt;.git</pre>
+<p>GitHub を使えない場合だけ、ZIP を展開してローカルリポジトリ化します。</p>
+<pre>git init -b main
+git add .
+git commit -m "T-000: セットアップ開始"</pre>
+
+<h2>1. VS Code でリポジトリの一番上を開く</h2>
+<p>VS Code の「ファイル → フォルダーを開く」で、<code>README.md</code> と <code>docker-compose.yml</code> がある階層を開きます。下位フォルダだけを開くと、<code>docs/</code> や <code>packs/php/tickets/</code> が検索範囲外になります。ファイルを探すときは <strong>Ctrl+P → ファイル名</strong> が基本です。</p>
+
+<h2>2. 任意でチューター拡張を入れる</h2>
+<p>チューター拡張は任意です。入れなくてもすべての課題は完走できます。</p>
+<ol>
+<li>VS Code で <code>Ctrl+Shift+P</code></li>
+<li><code>Extensions: Install from VSIX</code> を選ぶ</li>
+<li><code>extensions/practicase-tutor/</code> フォルダにある <code>.vsix</code> ファイルを選ぶ</li>
+<li><code>Ctrl+Shift+P</code> → <code>Reload Window</code></li>
+</ol>
+<p>この拡張はローカル完結で、外部通信はしません。</p>
+
+<h2>3. アプリを起動する</h2>
+<pre>docker compose up -d
+docker compose exec app php tools/init-db.php</pre>
+<p>ブラウザで次を開きます。</p>
+<pre>http://localhost:8180/login.php</pre>
+<p><code>docs/03_参考資料/world.md</code> の利用者名簿にあるアカウントでログインできれば起動成功です。</p>
+<pre>kiryu@example.com / password123</pre>
+
+<h2>4. check コマンドを確認する</h2>
+<pre>docker compose exec app php tools/check.php</pre>
+<p>課題一覧が出れば、チェックツールは動いています。以後、文中の <code>check tutorial</code> は次の意味です。</p>
+<pre>docker compose exec app php tools/check.php tutorial</pre>
+
+<h2>5. T-000 を完了する</h2>
+<p>開くファイル:</p>
+<pre>packs/php/tickets/00_はじめに/T-000_setup/ticket.md</pre>
+<ol>
+<li><code>status: open</code> を <code>status: in_progress</code> にする</li>
+<li>起動確認を行う</li>
+<li><code>reports/T-000_setup_report.md</code> を作って、完了報告を書く</li>
+<li>check を実行する</li>
+</ol>
+<pre>docker compose exec app php tools/check.php T-000</pre>
+<p><code>結果: PASS</code> になったら、<code>status</code> を <code>closed</code> にします。</p>
+
+<h2>6. tutorial を始める</h2>
+<p>開くファイル:</p>
+<pre>packs/php/tickets/01_チュートリアル/tutorial/ticket.md</pre>
+<p>ブラウザで次を開きます。</p>
+<pre>http://localhost:8180/login.php?tutorial=1</pre>
+<p>画面の案内に従い、ログイン、案件一覧、案件詳細へ進みます。明るく表示されている行の項目名を見て、一覧と違う言葉を見つけます。</p>
+<p>VS Code では <strong>Ctrl+Shift+F</strong> を使い、画面に出ている誤った言葉を検索します。</p>
+<table>
+<tr><th>検索結果</th><th>役割</th></tr>
+<tr><td><code>public/projects/show.php</code></td><td>直す画面</td></tr>
+<tr><td><code>tests/checks/tutorial.php</code></td><td>合格条件</td></tr>
+</table>
+<p>直すのは画面の方です。修正後、check を実行します。</p>
+<pre>docker compose exec app php tools/check.php tutorial</pre>
+<p>PASS したら、<code>reports/tutorial_fix_report.md</code> を作り、3行で報告します。</p>
+<pre>何が起きていたか:
+どこをどう直したか:
+check の結果:</pre>
+<p>最後に <code>ticket.md</code> の <code>status</code> を <code>closed</code> にします。</p>
+
+<h2>7. tutorial-2 を始める</h2>
+<p>開くファイル:</p>
+<pre>packs/php/tickets/01_チュートリアル/tutorial-2/ticket.md</pre>
+<p>最初に読むファイル:</p>
+<pre>packs/php/app/tests/checks/tutorial-2.php</pre>
+<p>この課題では、テストが仕様書の役割を持っています。4つの <code>test(...)</code> を読み、何を入力すると何が返るべきかを確認します。</p>
+<p>実装するファイル:</p>
+<pre>packs/php/app/src/Support/TagSummary.php</pre>
+<p>TODO の中に、タグ別の件数を数える処理を書きます。実装後、check を実行します。</p>
+<pre>docker compose exec app php tools/check.php tutorial-2</pre>
+<p>PASS したら、<code>reports/tutorial-2_fix_report.md</code> を作り、3行で報告します。</p>
+<pre>作ったもの:
+工夫した点:
+check の結果:</pre>
+<p>最後に <code>ticket.md</code> の <code>status</code> を <code>closed</code> にします。</p>
+
+<h2>8. 次に進めるか確認する</h2>
+<ul>
+<li>アプリにログインできる</li>
+<li><code>check T-000</code> が PASS</li>
+<li><code>check tutorial</code> が PASS</li>
+<li><code>check tutorial-2</code> が PASS</li>
+<li><code>reports/</code> に3本の報告がある</li>
+<li><code>T-000</code>、<code>tutorial</code>、<code>tutorial-2</code> の <code>status</code> が <code>closed</code></li>
+</ul>
+<p>次に開くファイル:</p>
+<pre>packs/php/tickets/02_開発の基礎/T-001_job_validation/ticket.md</pre>
+<p>T-001 は <code>docs/00_はじめに/first-ticket-walkthrough.md</code> を手元に置いて進めてください。</p>
+
+<h2>困ったとき</h2>
+<table>
+<tr><th>症状</th><th>見る場所</th></tr>
+<tr><td>ファイルが見つからない</td><td>VS Code でリポジトリの一番上を開いているか確認</td></tr>
+<tr><td>ポートが使えない</td><td><code>PRACTICASE_PORT</code> を変える</td></tr>
+<tr><td>DB を戻したい</td><td><code>docker compose exec app php tools/init-db.php</code></td></tr>
+<tr><td>check が FAIL</td><td>FAIL のメッセージを読み、対象ファイルと条件を確認</td></tr>
+<tr><td>チュートリアル拡張が無い</td><td>拡張なしでも <code>ticket.md</code> の手順で進められる</td></tr>
+</table>
+
+</body>
+</html>

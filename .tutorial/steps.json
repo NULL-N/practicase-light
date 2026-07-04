@@ -1,0 +1,170 @@
+{
+  "comment": "PractiCase チューター拡張(extensions/practicase-tutor)が読む手順データ。ここに書けるのは表示文言と、拡張側で許可された操作の名前・ツアーIDだけ。答え(直す場所・実装コード)はここにも書かない。",
+  "tours": [
+    {
+      "tourId": "tutorial",
+      "title": "はじめての1語修正",
+      "subtitle": "肩慣らしクエスト — LV.1",
+      "teaser": "まずはここから。画面の誤表記を1語直して、「直す流れ」を一周します(約30分)。",
+      "outro": "「見る → 探す → 直す → check → 報告 → closed」を一周しました。",
+      "next": "tutorial-2",
+      "steps": [
+        {
+          "title": "チケットを読む",
+          "why": "実務の仕事は必ずチケット(依頼票)から始まります。アプリや勘からは始めません。",
+          "do": "明るく表示されたチケットをざっと読みます(まだ何も編集しません)。誰が・何に困っているかが掴めれば十分です。",
+          "file": "packs/php/tickets/01_チュートリアル/tutorial/ticket.md",
+          "anchor": "^# tutorial",
+          "dim": false,
+          "actions": []
+        },
+        {
+          "title": "status を in_progress にする",
+          "why": "「誰が何をやっているか」をチケットの状態で共有するのがチーム開発の基本です。",
+          "do": "明るい行の status: open を status: in_progress に書き換えて、Ctrl+S で保存します。",
+          "file": "packs/php/tickets/01_チュートリアル/tutorial/ticket.md",
+          "anchor": "^status: ",
+          "dim": true,
+          "actions": []
+        },
+        {
+          "title": "自分の見積もりを立てる",
+          "why": "見積と実績のズレを知ることが、実務でずっと使う上達の物差しになります。",
+          "do": "この課題、何分で終わりそうですか? 頭の中で一言でよいので見積もっておきます(終わったとき見比べます)。",
+          "file": null,
+          "anchor": null,
+          "dim": false,
+          "actions": []
+        },
+        {
+          "title": "ブラウザで症状を見る",
+          "why": "直す前に、壊れている姿を自分の目で確認するのが調査の第一歩です。",
+          "do": "下のボタンでアプリを開きます(ポートを変えた人は URL の番号を読み替え)。ブラウザ側でも光る場所が誘導してくれます。案件詳細で「おかしい項目名」を見つけたら、VS Code に戻って次へ。※ページが開けないときはアプリが寝ています — ターミナルで docker compose up -d app を実行してから、もう一度。",
+          "file": null,
+          "anchor": null,
+          "dim": false,
+          "url": "http://localhost:8180/login.php?tutorial=1",
+          "actions": ["openTutorialUrl"]
+        },
+        {
+          "title": "画面の文字でコードを探す",
+          "why": "画面に見えている文字は、必ずどこかのコードが出しています。「見えた言葉で全ファイル検索」が、コードの場所を知らなくても現場へたどり着く実務の型です。",
+          "do": "下のボタンで検索を開き、ブラウザで見た「誤っている方の言葉」をそのまま入力します。ヒットは2箇所 — tests/checks の方はこの課題の合格条件(テスト)なので触らず、画面のファイル(packs/php/app/public 側)が現場です。",
+          "file": null,
+          "anchor": null,
+          "dim": false,
+          "actions": ["openSearch"]
+        },
+        {
+          "title": "1語直して保存する",
+          "why": "修正は小さいほど安全です。今回は誤った表記を正しい用語に直す、それだけです。",
+          "do": "検索でたどり着いた行の誤った言葉を、support/spec.md にある正しい用語に直して Ctrl+S。ついでの整形など、余計な変更はしません。",
+          "file": null,
+          "anchor": null,
+          "dim": false,
+          "actions": []
+        },
+        {
+          "title": "check で確認する",
+          "why": "「直したつもり」と「直った」は別物です。テストを走らせて初めて、直ったと言えます。",
+          "do": "下のボタンでターミナルにコマンドを置きます。内容を確認して Enter で実行 — 結果: PASS が出るまで直します(FAIL のときは理由が表示されます)。",
+          "file": null,
+          "anchor": null,
+          "dim": false,
+          "actions": ["placeCheckCommand"]
+        },
+        {
+          "title": "報告して closed にする",
+          "why": "実務の仕事は「直した」ではなく「直したと伝えた」で完了します。",
+          "do": "下のボタンで報告ファイルを作り、3行(起きていたこと/どこをどう直したか/checkの結果)を埋めます。最後に、明るい行の status を closed に書き換えて保存 — これで一周完了です。",
+          "file": "packs/php/tickets/01_チュートリアル/tutorial/ticket.md",
+          "anchor": "^status: ",
+          "dim": false,
+          "actions": ["createFixReport"]
+        }
+      ]
+    },
+    {
+      "tourId": "tutorial-2",
+      "title": "はじめての部品づくり",
+      "subtitle": "実装クエスト — LV.2",
+      "teaser": "次は、少し実務に寄せた内容です — テストを仕様として読み、二重ループの部品をゼロから実装します(約40分)。",
+      "outro": "「テストを読む → 作る → check で固定する」ができました。次はいよいよ最初の本番課題 T-001 です(docs/00_はじめに/first-ticket-walkthrough.md を手元に)。",
+      "next": null,
+      "steps": [
+        {
+          "title": "チケットを読む",
+          "why": "2周目は「直す」ではなく「作る」仕事です。まずは依頼の全体像から。",
+          "do": "明るく表示されたチケットをざっと読みます。何を作るのか・どこに作るのかが掴めれば十分です。",
+          "file": "packs/php/tickets/01_チュートリアル/tutorial-2/ticket.md",
+          "anchor": "^# tutorial-2",
+          "dim": false,
+          "actions": []
+        },
+        {
+          "title": "status を変えて、見積もる",
+          "why": "着手の宣言と見積もりは、2周目からは自分の習慣にしていきます。",
+          "do": "status: open を in_progress にして保存。前回(tutorial)の実績も思い出して、今回は何分か見積もっておきます。",
+          "file": "packs/php/tickets/01_チュートリアル/tutorial-2/ticket.md",
+          "anchor": "^status: ",
+          "dim": true,
+          "actions": []
+        },
+        {
+          "title": "仕様の要約を読む",
+          "why": "作る前に「何ができたら完成か」を先に固定する — 実装はそれからです。",
+          "do": "入出力のルール表を読みます。「タグ名 => 件数」の形が頭に入れば OK。",
+          "file": "packs/php/tickets/01_チュートリアル/tutorial-2/support/spec.md",
+          "anchor": null,
+          "dim": false,
+          "actions": []
+        },
+        {
+          "title": "テストを「仕様書」として読む",
+          "why": "実務では、文章の仕様書よりテストコードが正確な仕様であることがよくあります。この読み方を体験するのが2周目の核です。",
+          "do": "明るくなっている4つの test(...) を上から読みます。「何を入れると・何が返るべきか」を自分の言葉で言えたら次へ(まだ書きません)。",
+          "file": "packs/php/app/tests/checks/tutorial-2.php",
+          "anchor": "^test\\(",
+          "dim": false,
+          "actions": []
+        },
+        {
+          "title": "TODO の場所に実装する",
+          "why": "外側で案件を1件ずつ、内側でその案件のタグを1つずつ — 「配列の中の配列」は実務で最頻出の形です。",
+          "do": "明るい TODO の場所に、foreach を2つ重ねて実装します。書き方に迷ったら tickets/01_チュートリアル/tutorial-2/support/hints.md を1段ずつ(答えは書いてありません)。",
+          "file": "packs/php/app/src/Support/TagSummary.php",
+          "anchor": "TODO\\(tutorial-2\\)",
+          "dim": true,
+          "actions": []
+        },
+        {
+          "title": "check で確認する — PASS まで",
+          "why": "「書けた」ではなく「テストが通った」が完成の定義です。FAIL の差分表示は敵ではなく、次に直す場所を教えてくれる味方です。",
+          "do": "下のボタンでターミナルにコマンドを置き、Enter で実行。4つのテストが全部 ok になるまで、差分を読みながら直します。",
+          "file": null,
+          "anchor": null,
+          "dim": false,
+          "actions": ["placeCheckCommand"]
+        },
+        {
+          "title": "実装を報告する",
+          "why": "作った部品は「何を作り、どう確認したか」まで伝えて初めてチームの資産になります。",
+          "do": "下のボタンで報告ファイルを作り、3行(作ったもの/工夫した点/checkの結果)を埋めます。",
+          "file": null,
+          "anchor": null,
+          "dim": false,
+          "actions": ["createFixReport"]
+        },
+        {
+          "title": "closed にして完了",
+          "why": "状態を閉じるところまでが1枚のチケットです。",
+          "do": "明るい行の status を closed に書き換えて保存 — 2周目クリアです。",
+          "file": "packs/php/tickets/01_チュートリアル/tutorial-2/ticket.md",
+          "anchor": "^status: ",
+          "dim": false,
+          "actions": []
+        }
+      ]
+    }
+  ]
+}

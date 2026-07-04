@@ -1,0 +1,22 @@
+# NULL-N PractiCase 開発・学習環境
+# リポジトリルートで実行する:
+#   docker compose up -d
+#   docker compose exec app php tools/init-db.php
+#   docker compose exec app php tools/check.php T-001
+# ポート変更: 環境変数 PRACTICASE_PORT で上書きできる(未設定なら 8180)。
+# ホスト側は 127.0.0.1 に限定する。同一LANから教材用の脆弱アプリへ到達させないため。
+#   PowerShell: $env:PRACTICASE_PORT='8280'; docker compose up -d
+#   bash:       PRACTICASE_PORT=8280 docker compose up -d
+# 競合したら +100(8280, 8380, ...)を使う
+services:
+  app:
+    build: ./packs/php/app
+    ports:
+      - "127.0.0.1:${PRACTICASE_PORT:-8180}:8180"
+    environment:
+      # init-db 等が案内 URL に使う(ホスト側の公開ポートをコンテナへ伝える)
+      - PRACTICASE_PORT=${PRACTICASE_PORT:-8180}
+    volumes:
+      - .:/var/www/practicase
+    working_dir: /var/www/practicase
+    command: php -S 0.0.0.0:8180 -t packs/php/app/public

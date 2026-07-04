@@ -1,0 +1,19 @@
+# SQLite 実体はコミットしない(schema.sql / seeds.sql から生成する)
+*.db
+*.sqlite
+*.sqlite3
+
+# 配布用スナップショットの出力先(make dist 相当の生成物)
+/dist/
+
+# PractiCase Light の生成物と、build-light の一時作業場所(worktree / 自己テスト)
+/dist-light/
+/.tmp/
+
+# 環境依存
+.env
+.DS_Store
+Thumbs.db
+
+# アプリの動作ログ(App\Support\Logger の出力。logs/README.md のみ追跡する)
+packs/php/app/logs/*.log

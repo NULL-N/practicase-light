@@ -1,0 +1,10 @@
+{
+  "comment": "PractiCase の Markdown 書式方針。実害のあるルール(見出し空行 MD022・重複見出し MD024)は実ファイルを直し、見た目だけのルールや教材固有の書き方と衝突するものは無効化する",
+  "default": true,
+  "MD013": false,
+  "MD060": false,
+  "MD032": false,
+  "MD025": { "front_matter_title": "" },
+  "MD036": false,
+  "MD034": false
+}

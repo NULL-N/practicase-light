@@ -1,0 +1,17 @@
+{
+    // フォルダを開いたら学習アプリを自動起動する(任意機能)。
+    // 初回に VS Code が「自動タスクを許可しますか?」と確認します — 許可した場合のみ動きます。
+    // 終了は自動化できないため、学習を終えるときは docker compose stop を実行してください
+    // (止め忘れても軽量コンテナ1個です。docs/00_はじめに/setup-guide.md「環境の後始末」参照)
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "PractiCase: アプリを自動起動",
+            "type": "shell",
+            "command": "docker compose up -d app 2>&1 || echo 起動できませんでした。上のエラーを確認してください。よくある原因は次の2つです。①Docker Desktop が起動していない。②ポート8180が別のプロセスで使用中。PRACTICASE_PORT環境変数で変更できます。詳しくは docs/00_はじめに/setup-guide.md へ。",
+            "runOptions": { "runOn": "folderOpen" },
+            "presentation": { "reveal": "silent", "panel": "dedicated", "showReuseMessage": false },
+            "problemMatcher": []
+        }
+    ]
+}

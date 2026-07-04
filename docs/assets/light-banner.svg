@@ -1,0 +1,55 @@
+<svg viewBox="0 0 960 220" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e2a52"/>
+      <stop offset="55%" stop-color="#2d3f8f"/>
+      <stop offset="100%" stop-color="#1b6fa8"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7ee7d8"/>
+      <stop offset="100%" stop-color="#5ad1f0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="960" height="220" rx="18" fill="url(#bg)"/>
+
+  <!-- decorative dot grid, right side -->
+  <g opacity="0.25" fill="#ffffff">
+    <circle cx="820" cy="40" r="3"/>
+    <circle cx="850" cy="40" r="3"/>
+    <circle cx="880" cy="40" r="3"/>
+    <circle cx="820" cy="65" r="3"/>
+    <circle cx="850" cy="65" r="3"/>
+    <circle cx="880" cy="65" r="3"/>
+    <circle cx="820" cy="90" r="3"/>
+    <circle cx="850" cy="90" r="3"/>
+    <circle cx="880" cy="90" r="3"/>
+  </g>
+
+  <!-- connector-line motif, echoing the ticket -> code -> check flow -->
+  <g stroke="url(#accent)" stroke-width="3" fill="none" opacity="0.9" stroke-linecap="round">
+    <path d="M 60 168 L 150 168"/>
+    <path d="M 190 168 L 280 168"/>
+    <path d="M 320 168 L 410 168"/>
+  </g>
+  <g fill="#5ad1f0">
+    <circle cx="60" cy="168" r="7"/>
+    <circle cx="190" cy="168" r="7"/>
+    <circle cx="320" cy="168" r="7"/>
+    <circle cx="410" cy="168" r="7"/>
+  </g>
+  <g font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="15" fill="#dce9ff">
+    <text x="60" y="196" text-anchor="middle">Ticket</text>
+    <text x="190" y="196" text-anchor="middle">Code</text>
+    <text x="320" y="196" text-anchor="middle">Check</text>
+    <text x="410" y="196" text-anchor="middle">Report</text>
+  </g>
+
+  <!-- title block -->
+  <text x="60" y="95" font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="46" font-weight="700" fill="#ffffff">
+    PractiCase <tspan fill="#7ee7d8">Light</tspan>
+  </text>
+  <text x="62" y="130" font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="18" fill="#c9d8f5">
+    実務体験型エンジニア育成教材 &#8211; はじめての実務修正を、チケットから体験する
+  </text>
+</svg>

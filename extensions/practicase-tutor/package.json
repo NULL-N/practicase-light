@@ -1,0 +1,46 @@
+{
+  "name": "practicase-tutor",
+  "displayName": "PractiCase チューター",
+  "description": "PractiCase 教材の VS Code 内チュートリアル誘導(ローカル完結・通信なし・依存ゼロ)",
+  "version": "0.3.0",
+  "publisher": "null-n",
+  "license": "SEE LICENSE IN README.md",
+  "private": true,
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Education"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "workspaceContains:**/.tutorial/steps.json"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "教材ワークスペースを信頼した場合のみ動作します(セキュリティ設計は README 参照)"
+    },
+    "virtualWorkspaces": false
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "practicaseTutor.start",
+        "title": "PractiCase: チュートリアルを始める"
+      },
+      {
+        "command": "practicaseTutor.show",
+        "title": "PractiCase: クエストログを表示する"
+      },
+      {
+        "command": "practicaseTutor.next",
+        "title": "PractiCase: 次のミッションへ"
+      },
+      {
+        "command": "practicaseTutor.stop",
+        "title": "PractiCase: チュートリアル表示を終了する"
+      }
+    ]
+  }
+}
