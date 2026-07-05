@@ -17,7 +17,8 @@
 | title | ○ | 文字列 | チケット題名(業務文体) | `案件登録で不正な値が登録できる` |
 | level | ○ | 整数 1〜5 | 難度レベル | `1` |
 | track | ○(省略時 dev) | 列挙 | **学習トラック(モード)**。`dev` = コードを読む・直す・テストする・レビューする / `design` = 設計書・図・仕様を更新する(コードは書かない)。type(作業種別)とは別の軸(例: `track: design` + `type: design-change`)。将来 `ops` / `review` を追加可能 | `dev` |
-| type | ○ | 列挙 | `setup` / `fix` / `feature` / `sql`(SQLを提出物として書く) / `rework`(差し戻し対応) / `review` / `integration-test` / `bug-report` / `refactor` / `test-impl`(テストが無い箇所にテストを書く) / `design-change`(設計書を更新する。コードは書かない) / `design-review`(設計PRをレビューする) / `investigation`(障害をログから調査し、修正と報告書の両方を提出する) / `conflict`(コンフリクトを解消する。Git 操作が学習対象) / `hotfix`(緊急対応。最小の修正で止血し、他の作業と混ぜない) / `release`(リリース作業。ノート・チェックリスト・タグ) / `handover`(引き継ぎ文書の作成。最終課題) | `fix` |
+| type | ○ | 列挙 | `setup` / `fix` / `feature` / `sql`(SQLを提出物として書く) / `rework`(差し戻し対応) / `review` / `integration-test` / `bug-report` / `refactor` / `test-impl`(テストが無い箇所にテストを書く) / `design-change`(設計書を更新する。コードは書かない) / `design-review`(設計PRをレビューする) / `investigation`(障害・異常を調査し報告書を提出する。ログから調査してコード修正まで行う課題と、DBから調査しSQL+報告書のみを提出する課題の両方がある) / `conflict`(コンフリクトを解消する。Git 操作が学習対象) / `hotfix`(緊急対応。最小の修正で止血し、他の作業と混ぜない) / `release`(リリース作業。ノート・チェックリスト・タグ) / `handover`(引き継ぎ文書の作成。最終課題) / `design`(既存の設計書を読む) / `requirement`(曖昧な要望を整理する) / `system-test`(総合テスト仕様を書く) | `fix` |
+| dojo_stage | − | 整数 1〜10 | 特定の設計課題群でのみ使用。1本の題材を10段階で育てる進行順(既存の`level`=全課題共通の絶対難度とは別軸)。対象外のチケットには付けない | `3` |
 | priority | ○ | 列挙 | `low` / `normal` / `high` | `high` |
 | estimated_minutes | ○ | 整数 | 予定工数(分)。振り返りで実績と比較する | `60` |
 | role | ○ | 文字列 | 学習者が演じる役割 | `developer` |

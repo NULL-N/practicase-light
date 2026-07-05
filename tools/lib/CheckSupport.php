@@ -47,7 +47,7 @@ function parseFrontMatter(string $markdown): ?array
     return $data;
 }
 
-/** tickets ディレクトリを深さを問わず走査し、ticket.md のパス一覧を返す(Light: 章立てで2階層になるため) */
+/** tickets ディレクトリを深さを問わず走査し、ticket.md のパス一覧を返す(章立てで2階層のため) */
 function findTicketFiles(string $dir): array
 {
     $found = [];

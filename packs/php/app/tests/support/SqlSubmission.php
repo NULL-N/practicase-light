@@ -60,3 +60,42 @@ function fetchSubmittedRows(string $ticketId, \PDO $pdo, array $intColumns = [])
 
     return $rows;
 }
+
+/**
+ * UPDATE を含む複数文の提出物用。SELECT / UPDATE / BEGIN・COMMIT・ROLLBACK
+ * だけを許可し、1文ずつに分割して返す(実行するかどうかは呼び出し側=各checkの判断に委ねる)。
+ *
+ * @return array<int, string> 正規化済みの各SQL文(コメント除去済み)
+ */
+function submittedMultiStageSql(string $ticketId): array
+{
+    $path = submittedSqlPath($ticketId);
+    assertTrue(is_file($path), "{$ticketId}.sql が見つかりません。packs/php/sql/ に作成してください");
+
+    $sql = (string) file_get_contents($path);
+    $withoutComments = preg_replace('/--.*$/m', '', $sql) ?? '';
+    $withoutComments = preg_replace('/\/\*.*?\*\//s', '', $withoutComments) ?? '';
+
+    $statements = [];
+    foreach (explode(';', $withoutComments) as $piece) {
+        $trimmed = trim($piece);
+        if ($trimmed !== '') {
+            $statements[] = $trimmed;
+        }
+    }
+
+    assertTrue($statements !== [], "{$ticketId}.sql にSQL文を書いてください");
+
+    foreach ($statements as $statement) {
+        assertTrue(
+            preg_match('/\A(SELECT|WITH|UPDATE|BEGIN|COMMIT|ROLLBACK)\b/i', $statement) === 1,
+            'この課題で書けるのは SELECT 文・UPDATE 文・トランザクション制御(BEGIN/COMMIT)だけです'
+        );
+        assertTrue(
+            preg_match('/\b(INSERT|DELETE|DROP|ALTER|CREATE|REPLACE|PRAGMA|ATTACH|DETACH|VACUUM|TRUNCATE)\b/i', $statement) !== 1,
+            'この課題では UPDATE 以外にDBやスキーマを変更するSQLは使いません'
+        );
+    }
+
+    return $statements;
+}

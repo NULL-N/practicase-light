@@ -34,6 +34,6 @@ test('D-013: 実装の割り当て(Service / Repository)がある', function ():
     assertTrue(str_contains($design, 'Repository'), 'Repository 層への割り当てが見つかりません(ARC-2)');
 });
 
-test('D-013: テスト観点の節がある', function (): void {
-    assertTrue(str_contains(d013Design(), 'テスト観点'), '「テスト観点」の節(境界のペアを2組以上)が見つかりません');
+test('D-013: 権限と異常系の節がある', function (): void {
+    assertTrue(str_contains(d013Design(), '権限'), '「権限と異常系」の節が見つかりません');
 });

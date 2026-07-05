@@ -21,8 +21,9 @@ require __DIR__ . '/lib/CheckSupport.php';
 use function PractiCase\Check\discoverTickets;
 
 const RECOMMENDED_ORDER = [
-    'T-000', 'tutorial', 'tutorial-2', 'T-001', 'T-012', 'T-002', 'T-013', 'T-014',
-    'D-010', 'D-011', 'D-012', 'D-013', 'T-017', 'T-005',
+    'T-000', 'tutorial', 'tutorial-2', 'T-001', 'T-012', 'T-002', 'T-013',
+    'D-010', 'D-011', 'D-012', 'D-013', 'D-014', 'T-017',
+    'T-014', 'T-015', 'T-016', 'T-018', 'T-019', 'T-028', 'T-005',
 ];
 
 $mode = ($argv[1] ?? '') === 'manual' ? 'manual' : 'gh';
@@ -53,7 +54,7 @@ function issueTitle(string $id, array $meta): string
 // 本文は1行に収める(改行入りコマンドはコピペで崩れやすいため)。詳細はチケット本体へ誘導する
 function issueBody(string $id, array $meta): string
 {
-    // Light は章立て(00_はじめに/…/04_小さな実装)で tickets/ が2階層になるため、
+    // Light は章立て(00_はじめに/…/05_小さな実装)で tickets/ が2階層になるため、
     // basename ではなく _dir(tickets/ からの相対パス。discoverTickets が設定する)をそのまま使う
     $dir = (string) ($meta['_dir'] ?? $id);
     $scope = implode(', ', (array) ($meta['scope'] ?? []));

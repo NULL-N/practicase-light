@@ -1,0 +1,29 @@
+--- a/packs/php/app/src/Service/AuthService.php
++++ b/packs/php/app/src/Service/AuthService.php
+@@ -16,12 +16,9 @@ final class AuthService
+         if ($user === null) {
+             return null;
+         }
+-        if ($user['status'] !== 'active') {
+-            return null; // suspended もログイン不可(F-01)
+-        }
+-        if ($user['role'] === 'admin') {
+-            return null;
++        if ($user['status'] !== 'active' && $user['role'] !== 'admin') {
++            return null; // suspended もログイン不可(F-01)
+         }
+         if (!password_verify($password, $user['password_hash'])) { // SEC-3
+             return null;
+         }
+--- a/packs/php/app/tests/checks/T-019.php
++++ b/packs/php/app/tests/checks/T-019.php
+@@ -27,10 +27,3 @@ test('T-019: 存在しないメールアドレスは変わらず拒否される
+     assertNull((new AuthService(new UserRepository()))->attempt('nobody-check@example.com', 'password123'));
+ });
+-
+-test('T-019: suspended なユーザーは変わらず拒否される(T-018の仕様・回帰確認)', function (): void {
+-    $pdo = freshDatabase();
+-    insertUser($pdo, ['email' => 'suspended-check@example.com', 'role' => 'admin', 'status' => 'suspended']);
+-
+-    assertNull((new AuthService(new UserRepository()))->attempt('suspended-check@example.com', 'password123'));
+-});

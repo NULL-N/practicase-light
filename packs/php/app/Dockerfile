@@ -1,4 +1,4 @@
-FROM php:8.3-cli
+FROM php:8.5-cli
 
 # git はチェックツール(scope 検査)が diff を取るために使う
 RUN apt-get update \

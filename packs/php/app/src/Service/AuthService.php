@@ -23,6 +23,9 @@ final class AuthService
         if ($user['status'] !== 'active') {
             return null; // suspended もログイン不可(F-01)
         }
+        if ($user['role'] === 'admin') {
+            return null;
+        }
         if (!password_verify($password, $user['password_hash'])) { // SEC-3
             return null;
         }

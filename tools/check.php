@@ -64,13 +64,19 @@ if ($ticket === null) {
   4 => 'T-012',
   5 => 'T-002',
   6 => 'T-013',
-  7 => 'T-014',
-  8 => 'D-010',
-  9 => 'D-011',
-  10 => 'D-012',
-  11 => 'D-013',
+  7 => 'D-010',
+  8 => 'D-011',
+  9 => 'D-012',
+  10 => 'D-013',
+  11 => 'D-014',
   12 => 'T-017',
-  13 => 'T-005',
+  13 => 'T-014',
+  14 => 'T-015',
+  15 => 'T-016',
+  16 => 'T-018',
+  17 => 'T-019',
+  18 => 'T-028',
+  19 => 'T-005',
 ) as $id) {
         if (!isset($discovered['tickets'][$id])) {
             continue;
@@ -87,10 +93,18 @@ printf("チケット: %s(Level %s / %s)\n", $ticket['title'] ?? '(無題)', $tic
 $failures = [];
 // 提出物(reports/)が必須の type。investigation は、加えて課題別テストの合格も必須(調査だけでなく修正まで)
 $reportRequiredTypes = ['bug-report', 'integration-test', 'review', 'rework', 'design-review', 'investigation', 'release', 'handover'];
-// 課題別テストの FAIL を「報告対象の不具合を再現できているサイン」として扱う type(調査・報告が本体の課題)
+// Light には type では括れない個別要件を持つ課題が無いため空のまま
+$reportRequiredIds = [];
+// 課題別テストの FAIL を「報告対象の不具合を再現できているサイン」として扱う type(調査・報告が本体の課題)。
+// track: dev 限定 — 「まだ直っていないコードの不具合を再現している」という前提の type だけが対象。
+// track: design の課題が同じ type 名を共有しても、書類の構造チェック失敗は素直に FAIL 扱いにする
+// (「失敗=不具合の証拠」という意味づけが成立しないため。実測: design-review は現状 track:design
+// 専用の課題別テストファイルを持たないため無影響)
 $testFailureAsNoteTypes = ['bug-report', 'integration-test', 'review', 'rework', 'design-review'];
-$isReportRequired = in_array((string) ($ticket['type'] ?? ''), $reportRequiredTypes, true);
-$isTestFailureNote = in_array((string) ($ticket['type'] ?? ''), $testFailureAsNoteTypes, true);
+$isReportRequired = in_array((string) ($ticket['type'] ?? ''), $reportRequiredTypes, true)
+    || in_array($requestedId, $reportRequiredIds, true);
+$isTestFailureNote = ((string) ($ticket['track'] ?? 'dev')) === 'dev'
+    && in_array((string) ($ticket['type'] ?? ''), $testFailureAsNoteTypes, true);
 $taskTestFailedForReport = false;
 
 // [1/3] 共通テスト

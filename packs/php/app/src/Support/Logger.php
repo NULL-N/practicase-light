@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Support;
 
 /**
- * アプリの動作ログ(logs/app.log)。障害調査の一次資料になる。
+ * アプリの動作ログ(support/logs/app.log)。障害調査の一次資料になる。
  * 書式は「日時 [レベル] イベント key=value ...」の1行1イベント(LOG-3: grep で絞れる形)。
  * 何を出してよいか・出してはいけないかの規約は docs/02_作業ルール/coding-rules.md の LOG 節が正。
  *

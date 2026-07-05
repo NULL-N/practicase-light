@@ -15,5 +15,5 @@
 .DS_Store
 Thumbs.db
 
-# アプリの動作ログ(App\Support\Logger の出力。logs/README.md のみ追跡する)
+# アプリの動作ログ(App\Support\Logger の出力。support/logs/README.md のみ追跡する)
 packs/php/app/logs/*.log
