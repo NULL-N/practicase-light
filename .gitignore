@@ -6,7 +6,7 @@
 # 配布用スナップショットの出力先(make dist 相当の生成物)
 /dist/
 
-# PractiCase Light の生成物と、build-light の一時作業場所(worktree / 自己テスト)
+# PractiCase Light for PHP の生成物と、build-light の一時作業場所(worktree / 自己テスト)
 /dist-light/
 /.tmp/
 

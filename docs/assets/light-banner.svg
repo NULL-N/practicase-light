@@ -47,7 +47,7 @@
 
   <!-- title block -->
   <text x="60" y="95" font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="46" font-weight="700" fill="#ffffff">
-    PractiCase <tspan fill="#7ee7d8">Light</tspan>
+    PractiCase <tspan fill="#7ee7d8">Light</tspan> <tspan font-size="30" fill="#c9d8f5">for PHP</tspan>
   </text>
   <text x="62" y="130" font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="18" fill="#c9d8f5">
     実務体験型エンジニア育成教材 &#8211; はじめての実務修正を、チケットから体験する
