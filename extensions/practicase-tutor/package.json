@@ -2,7 +2,7 @@
   "name": "practicase-tutor",
   "displayName": "PractiCase チューター",
   "description": "PractiCase 教材の VS Code 内チュートリアル誘導(ローカル完結・通信なし・依存ゼロ)",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "publisher": "null-n",
   "license": "SEE LICENSE IN README.md",
   "private": true,
@@ -41,6 +41,16 @@
         "command": "practicaseTutor.stop",
         "title": "PractiCase: チュートリアル表示を終了する"
       }
-    ]
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "practicaseTutorQuestLog",
+          "name": "クエストログ",
+          "type": "webview",
+          "visibility": "visible"
+        }
+      ]
+    }
   }
 }

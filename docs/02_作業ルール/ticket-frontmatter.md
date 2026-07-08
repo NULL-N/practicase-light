@@ -13,11 +13,11 @@
 
 | フィールド | 必須 | 型 | 説明 | 例 |
 |---|---|---|---|---|
-| id | ○ | 文字列 | 課題 ID。`T-` (作業) / `R-` (レビュー) / `D-` (設計) + 3桁。特例として導入課題のみ `tutorial`・`tutorial-2` 等の連番 | `T-001` |
+| id | ○ | 文字列 | 課題 ID。`T-` (作業) / `R-` (レビュー) / `D-` (設計) / `C-` (クラウド・外部API連携) + 3桁。特例として導入課題のみ `tutorial`・`tutorial-2` 等の連番 | `T-001` |
 | title | ○ | 文字列 | チケット題名(業務文体) | `案件登録で不正な値が登録できる` |
 | level | ○ | 整数 1〜5 | 難度レベル | `1` |
-| track | ○(省略時 dev) | 列挙 | **学習トラック(モード)**。`dev` = コードを読む・直す・テストする・レビューする / `design` = 設計書・図・仕様を更新する(コードは書かない)。type(作業種別)とは別の軸(例: `track: design` + `type: design-change`)。将来 `ops` / `review` を追加可能 | `dev` |
-| type | ○ | 列挙 | `setup` / `fix` / `feature` / `sql`(SQLを提出物として書く) / `rework`(差し戻し対応) / `review` / `integration-test` / `bug-report` / `refactor` / `test-impl`(テストが無い箇所にテストを書く) / `design-change`(設計書を更新する。コードは書かない) / `design-review`(設計PRをレビューする) / `investigation`(障害・異常を調査し報告書を提出する。ログから調査してコード修正まで行う課題と、DBから調査しSQL+報告書のみを提出する課題の両方がある) / `conflict`(コンフリクトを解消する。Git 操作が学習対象) / `hotfix`(緊急対応。最小の修正で止血し、他の作業と混ぜない) / `release`(リリース作業。ノート・チェックリスト・タグ) / `handover`(引き継ぎ文書の作成。最終課題) / `design`(既存の設計書を読む) / `requirement`(曖昧な要望を整理する) / `system-test`(総合テスト仕様を書く) | `fix` |
+| track | ○(省略時 dev) | 列挙 | **学習トラック(モード)**。`dev` = コードを読む・直す・テストする・レビューする / `design` = 設計書・図・仕様を更新する(コードは書かない) / `cloud` = 教材内のローカル外部APIを呼び出す・切り分ける(対象はアプリ本体ではなく外部API)。type(作業種別)とは別の軸(例: `track: design` + `type: design-change`)。将来 `ops` / `review` を追加可能 | `dev` |
+| type | ○ | 列挙 | `setup` / `fix` / `feature` / `sql`(SQLを提出物として書く) / `rework`(差し戻し対応) / `review` / `integration-test` / `bug-report` / `refactor` / `test-impl`(テストが無い箇所にテストを書く) / `design-change`(設計書を更新する。コードは書かない) / `design-review`(設計PRをレビューする) / `investigation`(障害・異常を調査し報告書を提出する。ログから調査してコード修正まで行う課題と、DBから調査しSQL+報告書のみを提出する課題の両方がある) / `conflict`(コンフリクトを解消する。Git 操作が学習対象) / `hotfix`(緊急対応。最小の修正で止血し、他の作業と混ぜない) / `release`(リリース作業。ノート・チェックリスト・タグ) / `handover`(引き継ぎ文書の作成。最終課題) / `design`(既存の設計書を読む) / `requirement`(曖昧な要望を整理する) / `system-test`(総合テスト仕様を書く) / `cloud`(外部APIを呼び出し、応答と記録を確認する) | `fix` |
 | dojo_stage | − | 整数 1〜10 | 特定の設計課題群でのみ使用。1本の題材を10段階で育てる進行順(既存の`level`=全課題共通の絶対難度とは別軸)。対象外のチケットには付けない | `3` |
 | priority | ○ | 列挙 | `low` / `normal` / `high` | `high` |
 | estimated_minutes | ○ | 整数 | 予定工数(分)。振り返りで実績と比較する | `60` |

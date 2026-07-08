@@ -55,7 +55,7 @@ if ($ticket === null) {
         echo "  (packs/php/tickets/ に課題がありません)\n";
     }
     // Light: トラック分けをせず、推奨順(docs/02_作業ルール/workflow.md と同じ並び)の1本リストで見せる
-    printf("\n[%s]\n", 'PractiCase Light の課題');
+    printf("\n[%s]\n", 'PractiCase Light for PHP の課題');
     foreach (array (
   0 => 'T-000',
   1 => 'tutorial',
@@ -77,6 +77,14 @@ if ($ticket === null) {
   17 => 'T-019',
   18 => 'T-028',
   19 => 'T-005',
+  20 => 'D-022',
+  21 => 'D-023',
+  22 => 'D-024',
+  23 => 'D-025',
+  24 => 'D-026',
+  25 => 'D-027',
+  26 => 'D-028',
+  27 => 'D-029',
 ) as $id) {
         if (!isset($discovered['tickets'][$id])) {
             continue;

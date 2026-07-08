@@ -74,8 +74,8 @@ function discoverTickets(string $ticketsDir): array
     foreach (findTicketFiles($ticketsDir) as $path) {
         $meta = parseFrontMatter((string) file_get_contents($path));
         $id = is_array($meta) ? (string) ($meta['id'] ?? '') : '';
-        // id は T-/R-/D-+3桁(T=作業 / R=レビュー / D=設計)。特例は導入課題 "tutorial"・"tutorial-2" 等の連番のみ(docs/02_作業ルール/ticket-frontmatter.md)
-        if (preg_match('/\A([TRD]-[0-9]{3}|tutorial(-[0-9]+)?)\z/', $id) !== 1) {
+        // id は T-/R-/D-/C-+3桁(T=作業 / R=レビュー / D=設計 / C=クラウド・外部API連携)。特例は導入課題 "tutorial"・"tutorial-2" 等の連番のみ(docs/02_作業ルール/ticket-frontmatter.md)
+        if (preg_match('/\A([TRDC]-[0-9]{3}|tutorial(-[0-9]+)?)\z/', $id) !== 1) {
             $warnings[] = "front matter が不正です(id を確認): {$path}";
             continue;
         }

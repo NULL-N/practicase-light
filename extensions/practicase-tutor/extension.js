@@ -62,7 +62,7 @@ let state = {
     tourSubtitle: '',
     index: -1, // -1 = 未開始(ロビー表示)
     tutorRoot: null, // 教材ルート(.tutorial/steps.json がある場所)。開いたフォルダの配下から探す
-    panel: null, // TutorPanel(エディタ右側に常駐するクエストログ)
+    panel: null, // TutorPanel(Explorer サイドバーに常駐するクエストログ)
     fileDecorations: null,
     highlightType: null,
     edgeType: null, // 対象行の上下に走る細いライン
@@ -72,6 +72,10 @@ let state = {
     pulseInterval: null, // 永続呼吸のタイマー
     statusBar: null, // 画面下: 現在地(クリックでログ表示)
     nextButton: null, // 画面下: 「できた、次へ」(ログが閉じていても進める)
+    navGeneration: 0, // 連打対策: gotoStep/startTour/stopTour を呼ぶたびに増やし、
+                       // 自分より新しい世代に追い越されたら古い方は黙って中断する
+    checkTerminal: null, // check コマンド用ターミナル(連打で量産しないよう使い回す)
+    checkTerminalCommand: null, // 直前に checkTerminal へ置いたコマンド文字列(同じなら送り直さない)
 };
 
 // ── ユーティリティ ─────────────────────────────────────────────────────────
@@ -170,13 +174,21 @@ const ACTIONS = {
             if (!command) {
                 return; // 固定リストに無いツアーではコマンドを置かない(原則3)
             }
-            // cwd を教材ルートにする(親フォルダを開いていても check が正しい場所で動く)
-            const terminal = vscode.window.createTerminal({
-                name: 'PractiCase check',
-                cwd: state.tutorRoot !== null ? state.tutorRoot : undefined,
-            });
-            terminal.show();
-            terminal.sendText(command, false); // addNewLine=false: 実行しない
+            // 連打・再クリックのたびに新規ターミナルを増やさない。閉じられていれば作り直す
+            if (state.checkTerminal === null || state.checkTerminal.exitStatus !== undefined) {
+                // cwd を教材ルートにする(親フォルダを開いていても check が正しい場所で動く)
+                state.checkTerminal = vscode.window.createTerminal({
+                    name: 'PractiCase check',
+                    cwd: state.tutorRoot !== null ? state.tutorRoot : undefined,
+                });
+                state.checkTerminalCommand = null; // 新しいターミナルなので前回コマンドの記憶を捨てる
+            }
+            state.checkTerminal.show();
+            // 直前と同じコマンドなら送り直さない(送り直すと未実行の入力欄で文字列が連結されてしまう)
+            if (state.checkTerminalCommand !== command) {
+                state.checkTerminal.sendText(command, false); // addNewLine=false: 実行しない
+                state.checkTerminalCommand = command;
+            }
             vscode.window.setStatusBarMessage('コマンドを置きました。内容を確認して Enter で実行してください', 8000);
         },
     },
@@ -222,7 +234,7 @@ async function openWorkspaceFile(rel) {
     }
     const uri = vscode.Uri.file(abs);
     // 注: revealInExplorer は使わない — サイドバーが切り替わって案内が隠れるため(ツリーの場所は 👉 バッジが示す)。
-    // 作業ファイルは常に左(第1グループ)に開く — 右はクエストログ専用に保つ
+    // 作業ファイルは常にエディタの第1グループに開く(タブが増減してもクエストログの表示位置と無関係)
     const doc = await vscode.workspace.openTextDocument(uri);
     return vscode.window.showTextDocument(doc, { preview: false, viewColumn: vscode.ViewColumn.One });
 }
@@ -415,32 +427,25 @@ class TutorFileDecorations {
 class TutorPanel {
     constructor(extensionUri) {
         this._extensionUri = extensionUri;
-        this._panel = null;
+        this._view = null; // WebviewView(resolveWebviewView で渡される。resolve されるまでは null)
     }
 
-    // エディタ領域の右側(第2グループ)にクエストログを出す。作業ファイルは常に左に開くため、
-    // 左のタブをいくら切り替えてもこのログは隠れない(サイドバーの取り合いから独立)
-    show() {
-        if (this._panel !== null) {
-            this._panel.reveal(vscode.ViewColumn.Two, true);
-            this.render();
-            return;
-        }
-        this._panel = vscode.window.createWebviewPanel(
-            'practicaseTutor',
-            '🎓 チュートリアル',
-            { viewColumn: vscode.ViewColumn.Two, preserveFocus: true },
-            {
-                enableScripts: true,
-                retainContextWhenHidden: true,
-                localResourceRoots: [this._extensionUri], // 外部リソースを読ませない(原則6)
-            }
-        );
-        this._panel.onDidDispose(() => {
-            this._panel = null;
+    // Explorer サイドバーの「クエストログ」セクションが(初めて)開かれたときに VS Code から呼ばれる。
+    // 既存の explorer コンテナに相乗りする形で登録している(package.json 側)。専用の
+    // activitybar コンテナは使わない — 過去にそれを試して Explorer と排他になり、
+    // 片方を見ると片方が消える不具合を踏んだため。
+    // 以降はこの WebviewView をそのまま使い回す(dispose されない限り作り直さない)。
+    resolveWebviewView(webviewView /*, context, token */) {
+        this._view = webviewView;
+        webviewView.webview.options = {
+            enableScripts: true,
+            localResourceRoots: [this._extensionUri], // 外部リソースを読ませない(原則6)
+        };
+        webviewView.onDidDispose(() => {
+            this._view = null;
         });
         // 受け付けるメッセージも許可リスト(原則6)
-        this._panel.webview.onDidReceiveMessage(async (msg) => {
+        webviewView.webview.onDidReceiveMessage(async (msg) => {
             if (!msg || typeof msg !== 'object') {
                 return;
             }
@@ -468,9 +473,17 @@ class TutorPanel {
         this.render();
     }
 
+    // WebviewView には createWebviewPanel の reveal() に相当する API が無いため、VS Code が
+    // ビューの登録から自動生成するコマンド `<viewId>.focus` で表示する(未 resolve でも解決される —
+    // Explorer が閉じていれば開き、セクションが畳まれていれば展開し、初回なら
+    // resolveWebviewView を呼んでから表示する)
+    show() {
+        vscode.commands.executeCommand('practicaseTutorQuestLog.focus');
+    }
+
     render() {
-        if (this._panel === null) {
-            return;
+        if (this._view === null) {
+            return; // まだ resolve されていない(クエストログのセクションが一度も開かれていない)
         }
         const nonce = String(Date.now()) + Math.random().toString(36).slice(2);
         let body;
@@ -483,7 +496,7 @@ class TutorPanel {
         } else {
             body = this._questLog(state.index, state.steps.length);
         }
-        this._panel.webview.html = `<!DOCTYPE html>
+        this._view.webview.html = `<!DOCTYPE html>
 <html lang="ja"><head><meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'nonce-${nonce}'; script-src 'nonce-${nonce}';">
 <style nonce="${nonce}">
@@ -638,8 +651,8 @@ class TutorPanel {
         const head = `<div class="emblem"><span class="gem"></span></div>
             <div class="quest-title-row"><span class="quest-badge">QUEST LOG</span>
             <span class="quest-name">チュートリアル</span></div>`;
-        const hint = `<p class="hint">💡 このログはエディタの右側に居座ります(境界をドラッグで幅調整)。
-            誤って閉じても、画面下の 🎓 からいつでも呼び戻せます。
+        const hint = `<p class="hint">💡 このログはエクスプローラーに居座ります(境界をドラッグで高さ調整)。
+            他のファイルを開いてもここは隠れません。誤って閉じても、画面下の 🎓 からいつでも呼び戻せます。
             「できた、次へ」は画面下にもあるので、ログを見ていなくても進めます。</p>`;
 
         return head + cards + hint;
@@ -761,16 +774,27 @@ async function gotoStep(i) {
     if (i < 0) {
         return;
     }
+    // 連打対策: この呼び出しの世代を刻む。await の間に次の操作(連打・stop等)が
+    // state.navGeneration をさらに進めていたら、自分は古い呼び出しなので黙って中断する
+    // (state.index 自体はここで即座に確定させるので、連打してもボタンは常に反応する。
+    // 遅れて解決した古い呼び出しが、新しいステップの上に古い装飾を上書きするのを防ぐだけ)
+    const myGeneration = ++state.navGeneration;
     state.index = i;
     clearEditorDecorations();
     const step = state.steps[i]; // i >= length のときは undefined = 完走画面
     updateStatusBar();
     if (step && step.file) {
         const editor = await openWorkspaceFile(step.file);
+        if (myGeneration !== state.navGeneration) {
+            return; // 待っている間に追い越された。反映は追い越した側に任せる
+        }
         if (editor && step.anchor) {
             applyEditorDecorations(editor, step);
             // 開いた直後はレンダリングが追いつかないことがあるため、少し後にもう一度当てる
             setTimeout(() => {
+                if (myGeneration !== state.navGeneration) {
+                    return;
+                }
                 const active = vscode.window.activeTextEditor;
                 if (active && active.document === editor.document) {
                     applyEditorDecorations(active, step);
@@ -812,6 +836,7 @@ function updateStatusBar() {
 }
 
 function stopTour() {
+    state.navGeneration++; // 進行中の gotoStep があれば中断させる
     state.index = -1;
     clearEditorDecorations();
     state.fileDecorations.setTarget(null);
@@ -830,6 +855,13 @@ async function activate(context) {
     context.subscriptions.push(vscode.window.registerFileDecorationProvider(state.fileDecorations));
 
     state.panel = new TutorPanel(context.extensionUri);
+    // retainContextWhenHidden は付けない: render() は毎回 state から HTML を作り直すため
+    // 内容保持の利点が無く、非表示中もCSSアニメーション(shimmer/aurora/breathe)が裏で
+    // 回り続けて重くなるだけ。非表示になれば破棄され、再表示時は resolveWebviewView が
+    // 呼ばれて現在の state から正しく再構築される
+    context.subscriptions.push(
+        vscode.window.registerWebviewViewProvider('practicaseTutorQuestLog', state.panel)
+    );
 
     state.statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
     state.statusBar.command = 'practicaseTutor.show';
