@@ -85,6 +85,9 @@ if ($ticket === null) {
   25 => 'D-027',
   26 => 'D-028',
   27 => 'D-029',
+  28 => 'C-001',
+  29 => 'C-002',
+  30 => 'C-003',
 ) as $id) {
         if (!isset($discovered['tickets'][$id])) {
             continue;

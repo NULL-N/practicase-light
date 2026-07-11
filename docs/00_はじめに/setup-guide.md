@@ -1,6 +1,6 @@
 # セットアップガイド(T-000 の作業手順)
 
-PractiCase を自分の環境に用意する。ここでの作業そのものが最初の課題 **T-000** になっている。
+PractiCase for PHP を自分の環境に用意する。ここでの作業そのものが最初の課題 **T-000** になっている。
 
 導入から `tutorial` / `tutorial-2` 完了までを1枚で進めたい場合は、
 先に **[docs/00_はじめに/start-to-tutorial-guide.md](start-to-tutorial-guide.md)** を開いてください。

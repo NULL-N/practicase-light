@@ -14,7 +14,7 @@ $roleLabels = ['engineer' => 'エンジニア', 'client' => 'クライアント'
 $navLinks = match ($currentUser['role'] ?? '') {
     'engineer' => [['案件一覧', '/projects/index.php'], ['マイ応募', '/applications/mine.php']],
     'client' => [['自社案件', '/client/projects.php'], ['案件登録', '/client/project_new.php']],
-    'admin' => [['ユーザー一覧', '/admin/users.php'], ['案件一覧', '/projects/index.php']],
+    'admin' => [['ユーザー一覧', '/admin/users.php'], ['案件一覧', '/projects/index.php'], ['API監査ログ', '/admin/pcp-audit-log.php']],
     default => [],
 };
 ?>

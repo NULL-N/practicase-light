@@ -8,6 +8,12 @@
 #   PowerShell: $env:PRACTICASE_PORT='8280'; docker compose up -d
 #   bash:       PRACTICASE_PORT=8280 docker compose up -d
 # 競合したら +100(8280, 8380, ...)を使う
+#
+# pcp サービスは、外部API入門の章で使う教材用のローカル架空クラウドAPI(PCP)。
+# ホストへポートを公開せず、app コンテナの中からだけ http://pcp:8080 へ到達できる。
+#   例: docker compose exec app curl http://pcp:8080/v1/health
+# pcp-internal は internal: true — pcp コンテナ自体が外部へ出る経路を持たない。
+# app は pcp に依存しない(pcp が止まっていても、他の課題はすべて進められる)。
 services:
   app:
     build: ./packs/php/app
@@ -20,3 +26,23 @@ services:
       - .:/var/www/practicase
     working_dir: /var/www/practicase
     command: php -S 0.0.0.0:8180 -t packs/php/app/public
+    networks:
+      - default
+      - pcp-internal
+  pcp:
+    build: ./packs/php/pcp
+    networks:
+      - pcp-internal
+    volumes:
+      - pcp_data:/var/pcp-data
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://localhost:8080/v1/health')===false?1:0);"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 3s
+networks:
+  pcp-internal:
+    internal: true
+volumes:
+  pcp_data:

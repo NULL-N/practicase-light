@@ -40,6 +40,7 @@ PractiCase では構造を単純化しすぎず、代わりにこの地図で迷
 | 場所 | 何があるか | 注意 |
 |---|---|---|
 | `tools/` | `check.php`、`init-db.php` など | 通常はコマンドとして使うだけ |
+| `packs/php/pcp/` | 通知基盤 PCP(教材内の架空クラウドAPI)のサーバー | C-001〜C-003 で API の呼び先として使う。編集する場所ではない |
 | `.github/workflows/` | GitHub Actions | 学習者が編集する場所ではない |
 | `extensions/` | VS Code チューター拡張 | インストールするだけ。課題解決では編集しない |
 | `.vscode/` | VS Code 用の補助設定 | 必要なときだけ |
@@ -51,6 +52,7 @@ PractiCase では構造を単純化しすぎず、代わりにこの地図で迷
 | `packs/php/tickets/` | 課題本体 |
 | `packs/php/app/` | PHPアプリ本体 |
 | `packs/php/sql/` | SQL課題の提出ファイル |
+| `packs/php/pcp/` | 通知基盤 PCP のサーバー(C-001〜C-003 の呼び先) |
 
 ## packs/php/app/ の中身
 
