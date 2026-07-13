@@ -73,7 +73,7 @@ docker compose exec app php tools/init-db.php</pre>
 <ol>
 <li><code>status: open</code> を <code>status: in_progress</code> にする</li>
 <li>起動確認を行う</li>
-<li><code>reports/T-000_setup_report.md</code> を作って、完了報告を書く</li>
+<li><code>docs/templates/setup_report.md</code> を <code>reports/T-000_setup_report.md</code> へコピーして、完了報告を書く</li>
 <li>check を実行する</li>
 </ol>
 <pre>docker compose exec app php tools/check.php T-000</pre>

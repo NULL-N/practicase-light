@@ -115,7 +115,7 @@ packs/php/tickets/00_はじめに/T-000_setup/ticket.md
 
 1. `status: open` を `status: in_progress` にする
 2. 起動確認を行う
-3. `reports/T-000_setup_report.md` を作って、完了報告を書く
+3. `docs/templates/setup_report.md` を `reports/T-000_setup_report.md` へコピーして、完了報告を書く
 4. check を実行する
 
 ```text

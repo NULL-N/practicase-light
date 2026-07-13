@@ -68,13 +68,19 @@ function pcpPdo(): PDO
         . ' event_type TEXT NOT NULL,'
         . ' http_status INTEGER NOT NULL,'
         . ' recipient TEXT,'
-        . ' delay_ms INTEGER)'
+        . ' delay_ms INTEGER,'
+        . ' target TEXT)'
     );
-    // delay_ms 列は上位版と列構成をそろえるための列(Light 版では常に null)。
+    // delay_ms / target 列は上位版と列構成をそろえるための列(Light 版では常に null)。
     // 旧スキーマの既存 volume にも冪等に列を足す(列が既にあれば失敗するので無視する)。
     // volume を作り直させない = 学習者の過去の監査ログを消さない
     try {
         $pdo->exec('ALTER TABLE audit_log ADD COLUMN delay_ms INTEGER');
+    } catch (Throwable) {
+        // 列が既に存在する
+    }
+    try {
+        $pdo->exec('ALTER TABLE audit_log ADD COLUMN target TEXT');
     } catch (Throwable) {
         // 列が既に存在する
     }
