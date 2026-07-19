@@ -33,9 +33,6 @@ $result = match ($decision) {
     default => null,
 };
 
-if ($result === null) {
-    abort404(); // D-1 / G-4
-}
 if ($result === true) {
     Logger::info('application.decide', ['user' => $user['id'], 'application' => $applicationId, 'decision' => $decision]);
     Flash::success($decision === 'accept' ? '応募を承認しました' : '応募を却下しました');

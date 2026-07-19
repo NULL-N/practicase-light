@@ -14,6 +14,12 @@
 #   例: docker compose exec app curl http://pcp:8080/v1/health
 # pcp-internal は internal: true — pcp コンテナ自体が外部へ出る経路を持たない。
 # app は pcp に依存しない(pcp が止まっていても、他の課題はすべて進められる)。
+#
+# redmine / redmine-db はチケット駆動運用のための任意サービス(profile 指定時だけ起動):
+#   docker compose --profile redmine up -d
+# 未指定の docker compose up -d では従来どおり app / pcp だけが起動する。
+# app は Redmine へ一切依存しない — Redmine が停止・未導入でも課題・提出・check は完結する。
+# ポート変更: PRACTICASE_REDMINE_PORT で上書き(未設定なら 8280)。競合したら +100(8380, ...)
 services:
   app:
     build: ./packs/php/app
@@ -24,6 +30,9 @@ services:
       - PRACTICASE_PORT=${PRACTICASE_PORT:-8180}
     volumes:
       - .:/var/www/practicase
+      # Redmine seed 用の認証情報(bootstrap が生成)を読み取り専用で参照する。
+      # profile 未指定でも空 volume がマウントされるだけで、既存の動作に影響しない
+      - redmine_runtime:/var/practicase-redmine:ro
     working_dir: /var/www/practicase
     command: php -S 0.0.0.0:8180 -t packs/php/app/public
     networks:
@@ -41,8 +50,66 @@ services:
       timeout: 3s
       retries: 5
       start_period: 3s
+  # ---- ここから任意サービス(--profile redmine 指定時のみ) ----------------
+  # イメージはタグではなく digest まで固定する(公式イメージは同一タグでも再ビルドで
+  # digest が変わるため、更新は明示の再検証イベント)。この固定値は全課題版の
+  # 構成と機械検査で一致を確認している(漂流したら生成が FAIL する)。
+  # 認証値はローカル学習環境専用の固定値のみ(実在の資格情報は使わない)。
+  redmine:
+    image: redmine:6.1.3@sha256:c06026b1478d5a2affa5c85425fd0e9771d7e5087a7181431a1a4ed2a1872370
+    profiles: ["redmine"]
+    ports:
+      # ホストは localhost 限定(app の 8180 と同じ思想 — LAN へ公開しない)
+      - "127.0.0.1:${PRACTICASE_REDMINE_PORT:-8280}:3000"
+    environment:
+      - REDMINE_DB_POSTGRES=redmine-db
+      - REDMINE_DB_DATABASE=redmine
+      - REDMINE_DB_USERNAME=redmine
+      - REDMINE_DB_PASSWORD=practicase-local-db
+      - REDMINE_SECRET_KEY_BASE=practicase-local-secret-key-base-for-training-only
+    volumes:
+      - redmine_files:/usr/src/redmine/files
+      # bootstrap が seed 用 API キー等をここへ保存する(app 側は読み取り専用で参照)
+      - redmine_runtime:/practicase-runtime
+    depends_on:
+      redmine-db:
+        condition: service_healthy
+    networks:
+      - default
+      - redmine-internal
+    healthcheck:
+      # Ruby 標準ライブラリのみ使用(イメージ内で確実に動く)。初回起動は DB マイグレーションが
+      # 自動で走るため、start_period を長めに取る
+      test: ["CMD", "ruby", "-rnet/http", "-e", "exit(Net::HTTP.get_response(URI('http://127.0.0.1:3000/')).code == '200' ? 0 : 1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+  redmine-db:
+    image: postgres:14.23@sha256:caf49e3b10d377aa2cfee478591d623808527beb27125d38797b418013f72d81
+    profiles: ["redmine"]
+    environment:
+      - POSTGRES_DB=redmine
+      - POSTGRES_USER=redmine
+      - POSTGRES_PASSWORD=practicase-local-db
+    volumes:
+      - redmine_db_data:/var/lib/postgresql/data
+    networks:
+      - redmine-internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U redmine -d redmine"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
 networks:
   pcp-internal:
     internal: true
+  # redmine-db は redmine からだけ到達できる(app からは見えない)
+  redmine-internal:
+    internal: true
 volumes:
   pcp_data:
+  redmine_db_data:
+  redmine_files:
+  redmine_runtime:

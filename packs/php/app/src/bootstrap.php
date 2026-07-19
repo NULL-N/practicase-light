@@ -28,15 +28,22 @@ if (PHP_SAPI !== 'cli' && session_status() === PHP_SESSION_NONE) {
     ]);
 }
 
+// リクエスト単位の相関キー(request_id)を確定し、レスポンスヘッダーにも付ける。
+// 以降のログはすべて共通項目(request_id / method / path / user)が自動で付く
+if (PHP_SAPI !== 'cli') {
+    $requestId = \App\Support\Logger::beginRequest();
+    header('X-Request-ID: ' . $requestId);
+}
+
 // 未捕捉の例外: 詳細はログへ(調査の一次資料)、画面には内部情報を出さない(SEC-2 の思想と同じ)
 if (PHP_SAPI !== 'cli') {
     set_exception_handler(function (\Throwable $e): void {
+        // request_id / method / path / user は共通項目として Logger が自動付与する。
+        // ここでは例外固有の type / message / at だけを渡す
         \App\Support\Logger::error('uncaught_exception', [
             'type' => get_class($e),
             'message' => $e->getMessage(),
             'at' => $e->getFile() . ':' . $e->getLine(),
-            'url' => $_SERVER['REQUEST_URI'] ?? '-',
-            'user' => $_SESSION['user_id'] ?? '-',
         ]);
         http_response_code(500);
         echo '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>500</title></head>'
