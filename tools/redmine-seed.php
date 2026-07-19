@@ -14,7 +14,7 @@ declare(strict_types=1);
  * 対象を導出する — ID をこのファイルへ手書きしない。課題が正規手順で追加されれば
  * seed も自動で追随する。全課題版(ticket_order が空)では使えない(--ids を使う)。
  *
- * 設計(正本: Redmine 連携計画の 5 / 5b 章):
+ * 設計方針:
  * - 冪等キーは カスタムフィールド「PractiCase Ticket ID」だけ。件名や Redmine の連番では判定しない
  * - 通常実行は「未作成の課題を作成する」だけ。既存 issue には触れない
  * - --update-content は seed 所有項目(件名・説明・教材ID)のみ更新する。

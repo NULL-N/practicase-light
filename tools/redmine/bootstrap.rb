@@ -42,11 +42,20 @@ if Setting.rest_api_enabled != '1'
   changes << 'rest_api: 有効化'
 end
 
-# 3. admin の初回パスワード変更強制を解除する(UI 運用用)。
+# 3. admin の出荷時既定パスワードを無効化し、初回変更強制を解除する。
+#    既定値がまだ有効な環境だけを自己修復し、手動変更済みのパスワードは触らない。
 #    seed は admin を使わない — 過去の bootstrap が admin に付けた API キーは
 #    ここで無効化する(旧方式の残骸を残さない自己修復)
 admin = User.find_by_login('admin') or raise 'admin ユーザーが見つかりません'
-if admin.must_change_passwd?
+unless User.default_admin_account_changed?
+  random_password = SecureRandom.hex(32)
+  admin.password = random_password
+  admin.password_confirmation = random_password
+  admin.must_change_passwd = false
+  admin.save!
+  changes << 'admin: 出荷時既定パスワードを無効化(値は表示しない)'
+end
+if admin.reload.must_change_passwd?
   admin.update_column(:must_change_passwd, false)
   changes << 'admin: 初回パスワード変更の強制を解除'
 end
@@ -199,6 +208,7 @@ seed_roles = Member.find_by(project_id: project.id, user_id: seed_user.id)&.role
 raise 'seed-user のロールが PractiCase Seed のみになっていません' \
   unless seed_roles.map(&:name) == [SEED_ROLE_NAME]
 raise 'runtime 設定が読めません' unless File.readable?(RUNTIME_FILE)
+raise 'admin の出荷時既定パスワードが有効なままです' unless User.default_admin_account_changed?
 
 if changes.empty?
   puts 'bootstrap: no-op(すべて設定済み)'
@@ -207,4 +217,4 @@ else
   changes.each { |c| puts "  - #{c}" }
 end
 puts 'integrity: tracker=1 custom-field=1 project=1 learner=1 learner-role=developer-only ' \
-     'seed-user=non-admin seed-role=minimal runtime=saved'
+     'seed-user=non-admin seed-role=minimal admin-default-password=disabled runtime=saved'
