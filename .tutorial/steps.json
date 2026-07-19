@@ -5,32 +5,32 @@
       "tourId": "tutorial",
       "title": "はじめての1語修正",
       "subtitle": "肩慣らしクエスト — LV.1",
-      "teaser": "まずはここから。画面の誤表記を1語直して、「直す流れ」を一周します(約30分)。",
-      "outro": "「見る → 探す → 直す → check → 報告 → closed」を一周しました。",
+      "teaser": "まずはここから。Redmineで着手し、画面の誤表記を1語直して仕事を閉じるまで一周します(約30分)。",
+      "outro": "「Redmineで着手 → 見る → 探す → 直す → check → 報告 → Closed」を一周しました。",
       "next": "tutorial-2",
       "steps": [
         {
-          "title": "チケットを読む",
+          "title": "Redmineからチケットを読む",
           "why": "実務の仕事は必ずチケット(依頼票)から始まります。アプリや勘からは始めません。",
-          "do": "明るく表示されたチケットをざっと読みます(まだ何も編集しません)。誰が・何に困っているかが掴めれば十分です。",
+          "do": "RedmineでPractiCase Ticket IDがtutorialのissueを開き、明るく表示されたticket.mdもざっと読みます。誰が・何に困っているかが掴めれば十分です。",
           "file": "packs/php/tickets/01_チュートリアル/tutorial/ticket.md",
           "anchor": "^# tutorial",
           "dim": false,
           "actions": []
         },
         {
-          "title": "status を in_progress にする",
-          "why": "「誰が何をやっているか」をチケットの状態で共有するのがチーム開発の基本です。",
-          "do": "明るい行の status: open を status: in_progress に書き換えて、Ctrl+S で保存します。",
-          "file": "packs/php/tickets/01_チュートリアル/tutorial/ticket.md",
-          "anchor": "^status: ",
-          "dim": true,
+          "title": "Redmineで着手する",
+          "why": "誰が何をやっているかを担当者と状態で共有するのがチーム開発の基本です。",
+          "do": "Redmineで自分を担当者に設定し、statusをNewからIn Progressへ変更します。ticket.mdのfront matterは変更しません。",
+          "file": null,
+          "anchor": null,
+          "dim": false,
           "actions": []
         },
         {
-          "title": "自分の見積もりを立てる",
+          "title": "見積もりをコメントする",
           "why": "見積と実績のズレを知ることが、実務でずっと使う上達の物差しになります。",
-          "do": "この課題、何分で終わりそうですか? 頭の中で一言でよいので見積もっておきます(終わったとき見比べます)。",
+          "do": "この課題が何分で終わりそうかを考え、Redmineのコメント(note)に残します(終わったとき見比べます)。",
           "file": null,
           "anchor": null,
           "dim": false,
@@ -74,11 +74,11 @@
           "actions": ["placeCheckCommand"]
         },
         {
-          "title": "報告して closed にする",
+          "title": "報告してClosedにする",
           "why": "実務の仕事は「直した」ではなく「直したと伝えた」で完了します。",
-          "do": "下のボタンで報告ファイルを作り、3行(起きていたこと/どこをどう直したか/checkの結果)を埋めます。最後に、明るい行の status を closed に書き換えて保存 — これで一周完了です。",
-          "file": "packs/php/tickets/01_チュートリアル/tutorial/ticket.md",
-          "anchor": "^status: ",
+          "do": "下のボタンで報告ファイルを作り、3行(起きていたこと/どこをどう直したか/checkの結果)を埋めます。RedmineへPASSと報告ファイル名をコメントし、In ProgressからResolved、Closedへ進めれば一周完了です。",
+          "file": null,
+          "anchor": null,
           "dim": false,
           "actions": ["createFixReport"]
         }
@@ -88,26 +88,26 @@
       "tourId": "tutorial-2",
       "title": "はじめての部品づくり",
       "subtitle": "実装クエスト — LV.2",
-      "teaser": "次は、少し実務に寄せた内容です — テストを仕様として読み、二重ループの部品をゼロから実装します(約40分)。",
-      "outro": "「テストを読む → 作る → check で固定する」ができました。次はいよいよ最初の本番課題 T-001 です(docs/00_はじめに/first-ticket-walkthrough.md を手元に)。",
+      "teaser": "次はRedmineの流れを繰り返し、テストを仕様として読んで二重ループの部品を実装します(約40分)。",
+      "outro": "「Redmineで着手 → テストを読む → 作る → check → 報告 → Closed」ができました。次はいよいよ最初の本番課題 T-001 です(docs/00_はじめに/first-ticket-walkthrough.md を手元に)。",
       "next": null,
       "steps": [
         {
-          "title": "チケットを読む",
+          "title": "Redmineからチケットを読む",
           "why": "2周目は「直す」ではなく「作る」仕事です。まずは依頼の全体像から。",
-          "do": "明るく表示されたチケットをざっと読みます。何を作るのか・どこに作るのかが掴めれば十分です。",
+          "do": "RedmineでPractiCase Ticket IDがtutorial-2のissueを開き、明るく表示されたticket.mdも読みます。何を作るのか・どこに作るのかが掴めれば十分です。",
           "file": "packs/php/tickets/01_チュートリアル/tutorial-2/ticket.md",
           "anchor": "^# tutorial-2",
           "dim": false,
           "actions": []
         },
         {
-          "title": "status を変えて、見積もる",
+          "title": "Redmineで着手し、見積もる",
           "why": "着手の宣言と見積もりは、2周目からは自分の習慣にしていきます。",
-          "do": "status: open を in_progress にして保存。前回(tutorial)の実績も思い出して、今回は何分か見積もっておきます。",
-          "file": "packs/php/tickets/01_チュートリアル/tutorial-2/ticket.md",
-          "anchor": "^status: ",
-          "dim": true,
+          "do": "Redmineで自分を担当者にし、statusをNewからIn Progressへ変更します。前回の実績を踏まえた見積をコメントに残します。ticket.mdのfront matterは変更しません。",
+          "file": null,
+          "anchor": null,
+          "dim": false,
           "actions": []
         },
         {
@@ -156,11 +156,11 @@
           "actions": ["createFixReport"]
         },
         {
-          "title": "closed にして完了",
+          "title": "RedmineでClosedにする",
           "why": "状態を閉じるところまでが1枚のチケットです。",
-          "do": "明るい行の status を closed に書き換えて保存 — 2周目クリアです。",
-          "file": "packs/php/tickets/01_チュートリアル/tutorial-2/ticket.md",
-          "anchor": "^status: ",
+          "do": "RedmineへPASSと報告ファイル名をコメントし、In ProgressからResolved、Closedへ進めれば2周目クリアです。",
+          "file": null,
+          "anchor": null,
           "dim": false,
           "actions": []
         }

@@ -52,7 +52,10 @@ pack: php
 
 ## やること(この順で)
 
-1. この ticket.md の status を `in_progress` にして保存(見積も一言 — 前回の実績と比べてどう?)
+1. Redmine でカスタムフィールド `PractiCase Ticket ID` が `tutorial-2` の issue を開く
+   - 担当者を自分にして、status を **New → In Progress** にする
+   - 前回の実績と比べた見積をコメント(note)へ一言書く
+   - Redmine を使う間、この `ticket.md` の front matter は変更しない
 2. `support/spec.md` と、**テスト(checks/tutorial-2.php)を読む**
 3. `TagSummary.php` の TODO に実装する(迷ったらこのフォルダの `support/hints.md` を1段ずつ)
 4. check を回す — **PASS になるまで**が実装です:
@@ -62,13 +65,19 @@ pack: php
    ```
 
 5. `reports/tutorial-2_fix_report.md` に3行報告(作ったもの / 工夫した点 / check の結果)
-6. status を `closed` に — 2周目クリアです
+6. Redmine の issue に `check tutorial-2: PASS` と報告ファイル名をコメントし、status を
+   **In Progress → Resolved → Closed** にする — 2周目クリアです
+
+> **Redmine が使えないときだけ**: この `ticket.md` の front matter を `open` →
+> `in_progress` → `resolved` → `closed` と更新して進めます。Redmine への自動同期はないため、
+> 復旧後に必要な進捗だけ手動で合わせます。
 
 ## 完了条件
 
 - `check tutorial-2` が PASS(4つのテスト全部)
 - 3行の報告が reports/ にある
-- status が closed
+- Redmine の issue が Closed になり、PASS結果のコメントが残っている
+  (fallback時は front matter が `closed`)
 
 ## 完了したら(次の一歩)
 

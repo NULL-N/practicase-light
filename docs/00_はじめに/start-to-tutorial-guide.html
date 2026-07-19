@@ -25,11 +25,12 @@ ul, ol { padding-left: 22px; }
 <h2>完了の定義</h2>
 <table>
 <tr><th>項目</th><th>完了状態</th></tr>
-<tr><td>環境</td><td><code>docker compose up -d</code> でアプリが起動している</td></tr>
+<tr><td>環境</td><td><code>docker compose --profile redmine up -d</code> で app・pcp・Redmine が起動している</td></tr>
 <tr><td>DB</td><td><code>docker compose exec app php tools/init-db.php</code> を実行済み</td></tr>
-<tr><td>T-000</td><td><code>check T-000</code> が PASS、完了報告が <code>reports/</code> にある</td></tr>
-<tr><td>tutorial</td><td><code>check tutorial</code> が PASS、3行報告が <code>reports/</code> にある</td></tr>
-<tr><td>tutorial-2</td><td><code>check tutorial-2</code> が PASS、3行報告が <code>reports/</code> にある</td></tr>
+<tr><td>Redmine</td><td>bootstrap と全33課題の seed を実行済み</td></tr>
+<tr><td>T-000</td><td><code>check T-000</code> が PASS、完了報告が <code>reports/</code> にあり、Redmine で Closed</td></tr>
+<tr><td>tutorial</td><td><code>check tutorial</code> が PASS、3行報告が <code>reports/</code> にあり、Redmine で Closed</td></tr>
+<tr><td>tutorial-2</td><td><code>check tutorial-2</code> が PASS、3行報告が <code>reports/</code> にあり、Redmine で Closed</td></tr>
 <tr><td>次の一歩</td><td><code>packs/php/tickets/02_開発の基礎/T-001_job_validation/ticket.md</code> を開ける状態</td></tr>
 </table>
 
@@ -55,12 +56,22 @@ git commit -m "T-000: セットアップ開始"</pre>
 <p>この拡張はローカル完結で、外部通信はしません。</p>
 
 <h2>3. アプリを起動する</h2>
-<pre>docker compose up -d
+<pre>docker compose --profile redmine up -d
 docker compose exec app php tools/init-db.php</pre>
+<p>Redmine を初期化し、全33課題を投入します。</p>
+<p>PowerShell:</p>
+<pre>Get-Content -Raw tools/redmine/bootstrap.rb | docker compose --profile redmine exec -T redmine sh -c 'SECRET_KEY_BASE="$REDMINE_SECRET_KEY_BASE" bin/rails runner -'
+docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/tickets --all-light</pre>
+<p>Git Bash:</p>
+<pre>docker compose --profile redmine exec -T redmine sh -c 'SECRET_KEY_BASE="$REDMINE_SECRET_KEY_BASE" bin/rails runner -' &lt; tools/redmine/bootstrap.rb
+docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/tickets --all-light</pre>
 <p>ブラウザで次を開きます。</p>
 <pre>http://localhost:8180/login.php</pre>
 <p><code>docs/03_参考資料/world.md</code> の利用者名簿にあるアカウントでログインできれば起動成功です。</p>
 <pre>kiryu@example.com / password123</pre>
+<p>別のタブで Redmine を開き、教材用アカウントでログインします。</p>
+<pre>http://127.0.0.1:8280
+practicase / practicase123</pre>
 
 <h2>4. check コマンドを確認する</h2>
 <pre>docker compose exec app php tools/check.php</pre>
@@ -71,15 +82,17 @@ docker compose exec app php tools/init-db.php</pre>
 <p>開くファイル:</p>
 <pre>packs/php/tickets/00_はじめに/T-000_setup/ticket.md</pre>
 <ol>
-<li><code>status: open</code> を <code>status: in_progress</code> にする</li>
+<li>Redmine で <code>PractiCase Ticket ID = T-000</code> の issue を開く</li>
+<li>自分を担当者にし、見積をコメントして <strong>New → In Progress</strong> にする</li>
 <li>起動確認を行う</li>
 <li><code>docs/templates/setup_report.md</code> を <code>reports/T-000_setup_report.md</code> へコピーして、完了報告を書く</li>
 <li>check を実行する</li>
 </ol>
 <pre>docker compose exec app php tools/check.php T-000</pre>
-<p><code>結果: PASS</code> になったら、<code>status</code> を <code>closed</code> にします。</p>
+<p><code>結果: PASS</code> になったら、その結果と報告ファイル名を Redmine にコメントし、<strong>In Progress → Resolved → Closed</strong> にします。</p>
 
 <h2>6. tutorial を始める</h2>
+<p>Redmine で <code>PractiCase Ticket ID = tutorial</code> の issue を開き、自分を担当者にして、見積をコメントし、<strong>New → In Progress</strong> にします。</p>
 <p>開くファイル:</p>
 <pre>packs/php/tickets/01_チュートリアル/tutorial/ticket.md</pre>
 <p>ブラウザで次を開きます。</p>
@@ -97,9 +110,10 @@ docker compose exec app php tools/init-db.php</pre>
 <pre>何が起きていたか:
 どこをどう直したか:
 check の結果:</pre>
-<p>最後に <code>ticket.md</code> の <code>status</code> を <code>closed</code> にします。</p>
+<p>最後に <code>check tutorial: PASS</code> と報告ファイル名を Redmine にコメントし、<strong>In Progress → Resolved → Closed</strong> にします。</p>
 
 <h2>7. tutorial-2 を始める</h2>
+<p>Redmine で <code>PractiCase Ticket ID = tutorial-2</code> の issue を開き、自分を担当者にして、見積をコメントし、<strong>New → In Progress</strong> にします。</p>
 <p>開くファイル:</p>
 <pre>packs/php/tickets/01_チュートリアル/tutorial-2/ticket.md</pre>
 <p>最初に読むファイル:</p>
@@ -113,7 +127,7 @@ check の結果:</pre>
 <pre>作ったもの:
 工夫した点:
 check の結果:</pre>
-<p>最後に <code>ticket.md</code> の <code>status</code> を <code>closed</code> にします。</p>
+<p>最後に <code>check tutorial-2: PASS</code> と報告ファイル名を Redmine にコメントし、<strong>In Progress → Resolved → Closed</strong> にします。</p>
 
 <h2>8. 次に進めるか確認する</h2>
 <ul>
@@ -122,7 +136,7 @@ check の結果:</pre>
 <li><code>check tutorial</code> が PASS</li>
 <li><code>check tutorial-2</code> が PASS</li>
 <li><code>reports/</code> に3本の報告がある</li>
-<li><code>T-000</code>、<code>tutorial</code>、<code>tutorial-2</code> の <code>status</code> が <code>closed</code></li>
+<li>Redmine で <code>T-000</code>、<code>tutorial</code>、<code>tutorial-2</code> が Closed</li>
 </ul>
 <p>次に開くファイル:</p>
 <pre>packs/php/tickets/02_開発の基礎/T-001_job_validation/ticket.md</pre>
@@ -134,9 +148,12 @@ check の結果:</pre>
 <tr><td>ファイルが見つからない</td><td>VS Code でリポジトリの一番上を開いているか確認</td></tr>
 <tr><td>ポートが使えない</td><td><code>PRACTICASE_PORT</code> を変える</td></tr>
 <tr><td>DB を戻したい</td><td><code>docker compose exec app php tools/init-db.php</code></td></tr>
+<tr><td>Redmine が起動しない</td><td><code>docs/02_作業ルール/redmine-guide.md</code> の fallback と reset を確認</td></tr>
 <tr><td>check が FAIL</td><td>FAIL のメッセージを読み、対象ファイルと条件を確認</td></tr>
 <tr><td>チュートリアル拡張が無い</td><td>拡張なしでも <code>ticket.md</code> の手順で進められる</td></tr>
 </table>
+
+<p class="note"><strong>fallback</strong>: Redmine が起動しない・接続できない場合だけ、各 <code>ticket.md</code> の front matter を open → in_progress → resolved → closed と更新して進めます。Redmine 復旧後の進捗は自動同期されないため、必要な内容を手動で合わせてください。</p>
 
 </body>
 </html>

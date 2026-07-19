@@ -5,7 +5,8 @@
 **印刷するか、ブラウザの別ウィンドウで開いたままにして、VS Code はコードの作業に集中してください。**
 印刷・PDF化する場合は、同じ内容の `docs/00_はじめに/first-ticket-walkthrough.html` をブラウザで開いて Ctrl+P(印刷 → PDF に保存)。
 
-2本目以降の課題も、すべてこの流れで進みます(最終章「以降の課題への適用」参照)。
+2本目以降の課題も、Redmine から始めて同じ流れで進みます
+(最終章「以降の課題への適用」参照)。
 
 > **パスの読み方**: この教材に出てくるファイルパスは、すべて**リポジトリの一番上(README.md がある階層)からの
 > 相対表記**です。ファイルを探すときは、VS Code で **Ctrl+P** を押してファイル名(例: features.md)を
@@ -16,35 +17,41 @@
 
 | # | やること | 使うもの |
 |---|---|---|
-| 1 | チケットを読む | `tickets/<課題>/ticket.md` |
-| 2 | status を in_progress に + 自分の見積を書く | ticket.md の front matter / retrospective テンプレの「見積」欄 |
-| 3 | ブランチを切る(=着手の宣言) | `git switch -c feature/issue-<番号>-<課題ID>-<短い名前>`(Issue 未使用なら `feature/<課題ID>-<短い名前>`) |
+| 1 | Redmine で課題を選び、対応するチケットを読む | Redmine / `tickets/<課題>/ticket.md` |
+| 2 | 自分を担当者にし、見積をコメントして In Progress にする | Redmine / retrospective テンプレの「見積」欄 |
+| 3 | ブランチを切る(=着手の宣言) | `git switch -c feature/redmine-<issue番号>-<課題ID>-<短い名前>` |
 | 4 | 仕様書を読む | `support/spec.md` → `docs/01_設計資料/` の該当節 |
 | 5 | 症状を再現する | ブラウザ(アプリ) |
 | 6 | コードを読み、直す | VS Code |
 | 7 | チェックを実行する | `docker compose exec app php tools/check.php <課題ID>` |
 | 8 | 提出する | Pull Request(本文: `docs/templates/fix_report.md`) |
 | 9 | セルフレビュー | `support/rubric.md`(debrief がある課題は提出後に突き合わせ) |
-| 10 | 振り返り → closed | `docs/templates/retrospective.md` → `reports/` |
+| 10 | 振り返り → Closed | `docs/templates/retrospective.md` → `reports/` / Redmine |
+
+> **fallback**: Redmine が起動しない・接続できない場合だけ、`ticket.md` の front matter を
+> open → in_progress → resolved → closed と更新します。通常は front matter を変更しません。
+> Redmine と `check.php` の自動同期はないため、check の結果は自分でコメントに残します。
+> 起動・初期化・reset の詳細は [Redmine 運用ガイド](../02_作業ルール/redmine-guide.md)を参照してください。
 
 ## T-001 の歩き方
 
-### 手順1: チケットを読む(約5分)
+### 手順1: Redmine からチケットを読む(約5分)
 
-- 開くファイル: `packs/php/tickets/02_開発の基礎/T-001_job_validation/ticket.md`
+- Redmine のプロジェクト「PractiCase Light」で、カスタムフィールド
+  `PractiCase Ticket ID = T-001` の issue を開きます
+- 対応するファイル: `packs/php/tickets/02_開発の基礎/T-001_job_validation/ticket.md`
 - 次の4箇所に印を付けます: ①症状(3つ挙がっています) ②期待動作 ③調査の入口 ④完了条件
 - チケットは「起きていること」と「あるべき姿」のペアで読みます。この2つの**差**を埋めるのが今回の作業です
 
 ### 手順2〜3: status 更新とブランチ
 
-- `ticket.md` の**先頭にある `---` で囲まれた部分(front matter)**を自分で直接編集し、
-  `status: open` を `status: in_progress` に書き換えて保存します。**チケットファイルは編集してよいファイルです**。
-  あわせて `docs/templates/retrospective.md` を `reports/T-001_retrospective.md` にコピーし、**「見積」の欄だけ**先に書きます
+- Redmine で自分を担当者に設定し、自分の見積(何分か+内訳)をコメントに残して、
+  status を **New → In Progress** にします
+- `docs/templates/retrospective.md` を `reports/T-001_retrospective.md` にコピーし、
+  **「見積」の欄だけ**先に書きます
   (自分の読みで何分か+内訳。estimated_minutes を見る前に書くのがおすすめ — 完了後に答え合わせします)
-  (reports/ とチケットは check の変更範囲検査で常に許可されています)
 - ターミナルで、ブランチを切ります — これは Git 操作というより「**このチケットに着手した**」という宣言です:
-  - Issue 運用中(推奨): `git switch -c feature/issue-3-T-001-validation`(3 は自分の Issue 番号に読み替え)
-  - Issue を使わない場合: `git switch -c feature/T-001-validation`
+  `git switch -c feature/redmine-<issue番号>-T-001-validation`
 
 ### 手順4: 仕様書を読む(約10分)
 
@@ -56,7 +63,7 @@
 
 修正の前に、壊れていることを自分の環境で確認します。再現できていないバグは、直ったかどうかも判定できません。
 
-1. `docker compose up -d`(未起動の場合)
+1. `docker compose --profile redmine up -d`(未起動の場合)
 2. ブラウザで `http://localhost:8180/login.php` → クイックログインで「田淵(クライアント)」
 3. 「案件を登録する」を開き、チケットの症状の値(時間単価にマイナスなど)を入力して登録する
 4. **登録が通ってしまう**ことを確認し、どの値が通ったかをメモします
@@ -86,10 +93,14 @@ docker compose exec app php tools/check.php T-001
 
 ### 手順8〜10: 提出・セルフレビュー・振り返り
 
-1. コミット → Pull Request を作成。**具体的な手順は `docs/02_作業ルール/git-and-pr-guide.md`**(push・PR画面・セルフマージまで全手順)。PR 本文は `docs/templates/fix_report.md` の形式で**原因を自分の言葉で**。作成したら status を `resolved` に
+1. コミット → Pull Request を作成。**具体的な手順は `docs/02_作業ルール/git-and-pr-guide.md`**
+   (push・PR画面・セルフマージまで全手順)。PR 本文は `docs/templates/fix_report.md` の形式で
+   **原因を自分の言葉で**。check の PASS と提出物名を Redmine にコメントし、
+   status を **In Progress → Resolved** にします
 2. `support/rubric.md` の観点で自分の提出を見直します
 3. 振り返りを書きます — `reports` フォルダを右クリック → 「新しいファイル」→ `T-001_retrospective.md` を作り、
-   `docs/templates/retrospective.md` の項目をコピーして埋めます。書き終えたら status を `closed` にして完了です
+   `docs/templates/retrospective.md` の項目をコピーして埋めます。書き終えたら Redmine の
+   status を **Resolved → Closed** にして完了です
 
 ## 以降の課題への適用
 

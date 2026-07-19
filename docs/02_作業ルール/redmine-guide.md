@@ -1,12 +1,11 @@
-# Redmine 運用ガイド(チケット駆動運用・任意)
+# Redmine 運用ガイド(チケット駆動運用)
 
-このガイドは、Redmine を使ったチケット運用の手順書です。**やらなくても全33課題を
-最後まで完走できます**(その場合は `docker compose up -d` のまま、`ticket.md` を
-読んで進めてください)。実務のチーム開発でよく使われるチケット管理システム
-(Redmine / Jira / GitHub Issues など)に触れてみたい人向けの、任意の体験です。
+PractiCase Light では、**Redmine を仕事の入口と進捗管理の正本にする運用が標準**です。
+最初の `tutorial` と `tutorial-2` には初回操作を課題内にも書いてあります。以降の
+全33課題で共通する起動・投入・reset・fallback の手順は、このガイドを参照してください。
 
-各 `ticket.md` には Redmine の使い方を書きません。手順はすべてこの1ファイルに
-まとめてあります。
+Redmine が使えない場合も学習を止めないため、`ticket.md` の front matter を使う
+fallback を用意しています。これは通常運用ではなく、接続不能時の代替手段です。
 
 ## 使用バージョンについて
 
@@ -69,7 +68,15 @@ docker compose --profile redmine logs -f redmine
 Redmine 側にプロジェクト・トラッカー・カスタムフィールド・学習者アカウントを
 作ります。**何度実行しても安全**です(2回目以降は `bootstrap: no-op(すべて設定済み)` と表示されます)。
 
-```text
+PowerShell:
+
+```powershell
+Get-Content -Raw tools/redmine/bootstrap.rb | docker compose --profile redmine exec -T redmine sh -c 'SECRET_KEY_BASE="$REDMINE_SECRET_KEY_BASE" bin/rails runner -'
+```
+
+Git Bash:
+
+```bash
 docker compose --profile redmine exec -T redmine sh -c 'SECRET_KEY_BASE="$REDMINE_SECRET_KEY_BASE" bin/rails runner -' < tools/redmine/bootstrap.rb
 ```
 
@@ -105,15 +112,21 @@ docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/ti
 1. <http://127.0.0.1:8280> にログインし、プロジェクト「PractiCase Light」を開く
 2. 取り組む課題を選ぶ。カスタムフィールド「PractiCase Ticket ID」を見れば、
    `ticket.md` のどの課題に対応するかが分かります(例: `T-018`)
-3. 作業を始めたら、issue の status を **New → In Progress** に変更する
-4. `ticket.md` の指示に従ってコードを書き、`support/` の資料を読み、
+3. 自分を担当者に設定し、作業見積をコメント(note)に残す
+4. issue の status を **New → In Progress** に変更し、
+   `feature/redmine-<issue番号>-<課題ID>-<短い名前>` の形式でブランチを作る
+5. `ticket.md` の指示に従ってコードを書き、`support/` の資料を読み、
    `docker compose exec app php tools/check.php <課題ID>` を実行する
-5. check が PASS したら、issue の status を **In Progress → Resolved** に変更する
-6. 提出(PR 作成・reports への記載など)まで終えたら **Closed** にする(任意)
+6. check が PASS したら、結果と提出物名をコメントに残し、status を
+   **In Progress → Resolved** に変更する
+7. 提出(PR 作成・reports への記載など)とセルフレビューまで終えたら
+   **Resolved → Closed** にして完了する
 
 status の操作は Redmine の issue 編集画面から行います(front matter の `status` を
 書き換える必要はありません — Redmine を使う場合、進捗の正は Redmine 側です)。
-迷ったことや気づいたことは、issue のコメント(note)に自由に書いてください。
+迷ったことや気づいたことも、issue のコメント(note)に残してください。Redmine と
+`check.php` の自動同期はありません。PASS/FAIL は `check.php` の出力を確認し、結果を
+自分で Redmine に記録します。
 
 ## 6. 停止
 
