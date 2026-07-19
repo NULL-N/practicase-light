@@ -41,6 +41,23 @@ jobs:
       - name: 共通テストを実行(既存機能を壊していないか)
         run: docker compose exec -T app php packs/php/app/tests/run.php
 
+      # 配布台帳(dist.php / dist-verify.php / build-light.php)の整合検査。
+      # Master 判定は tools/dist.php の存在で行う — 配布ツール一式は配布物に入らないため
+      # Master でだけ真になる。内部資料フォルダ名での判定は、この yml 自身が配布物へ
+      # 入る際に禁止語検査(内部参照の漏洩検知)へ当たるため使えない(実測済み)。
+      # Master でツールが欠けていたら FAIL — 「台帳検査を消す変更」自身を検出する
+      - name: 配布台帳の整合検証(Master では必須・配布物側は skip)
+        run: |
+          if [ -f tools/dist.php ]; then
+            test -f tools/verify-distribution-manifests.php || {
+              echo "error: Master用の配布台帳検証ツールがありません"
+              exit 1
+            }
+            docker compose exec -T app php tools/verify-distribution-manifests.php
+          else
+            echo "skip: 配布物側"
+          fi
+
       - name: セットアップ状態の確認(main への push 時のみ)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: docker compose exec -T app php tools/check.php T-000

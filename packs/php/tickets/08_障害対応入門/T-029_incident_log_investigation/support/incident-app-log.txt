@@ -1,0 +1,20 @@
+2026-07-18 10:31:42 [info] login.success request_id=6bb2512c8c037956 method=POST path=/login.php user=4
+2026-07-18 10:31:50 [info] application.apply request_id=47f9adbddfe9fc37 method=POST path=/applications/create.php user=4 project=4
+2026-07-18 10:32:06 [info] login.success request_id=7519279e01634d13 method=POST path=/login.php user=2
+2026-07-18 10:32:12 [info] application.decide request_id=dba82cbdf37d1e6c method=POST path=/client/application_decide.php user=2 application=1 decision=accept
+2026-07-18 10:32:22 [info] login.failure request_id=f56f19a5212e148c method=POST path=/login.php user=anonymous
+2026-07-18 10:32:27 [info] login.success request_id=17020f1d425eb395 method=POST path=/login.php user=6
+2026-07-18 10:32:47 [info] login.success request_id=56f6f4d9f3f0c306 method=POST path=/login.php user=1
+2026-07-18 10:32:58 [info] login.success request_id=82be153e4cbe3473 method=POST path=/login.php user=5
+2026-07-18 10:33:07 [info] application.apply request_id=a2cdd08e48622870 method=POST path=/applications/create.php user=5 project=6
+2026-07-18 10:33:16 [info] login.success request_id=94b6d233d4a98679 method=POST path=/login.php user=3
+2026-07-18 10:33:25 [info] application.decide request_id=e3e35e0e05775b9f method=POST path=/client/application_decide.php user=3 application=5 decision=accept
+2026-07-18 10:33:42 [error] uncaught_exception request_id=ff8a5316ae2ec3de method=POST path=/client/application_decide.php user=3 type=TypeError message=App\Support\Flash::error(): Argument #1 ($message) must be of type string, null given, called in /var/www/practicase/packs/php/app/public/client/application_decide.php on line 40 at=/var/www/practicase/packs/php/app/src/Support/Flash.php:15
+2026-07-18 10:34:07 [error] uncaught_exception request_id=b143163acec65429 method=POST path=/client/application_decide.php user=3 type=TypeError message=App\Support\Flash::error(): Argument #1 ($message) must be of type string, null given, called in /var/www/practicase/packs/php/app/public/client/application_decide.php on line 40 at=/var/www/practicase/packs/php/app/src/Support/Flash.php:15
+2026-07-18 10:34:32 [error] uncaught_exception request_id=1791e484b44dca8b method=POST path=/client/application_decide.php user=3 type=TypeError message=App\Support\Flash::error(): Argument #1 ($message) must be of type string, null given, called in /var/www/practicase/packs/php/app/public/client/application_decide.php on line 40 at=/var/www/practicase/packs/php/app/src/Support/Flash.php:15
+2026-07-18 10:34:45 [info] application.decide request_id=5103816c302b2767 method=POST path=/client/application_decide.php user=2 application=9 decision=reject
+2026-07-18 10:34:52 [info] application.decide request_id=471410125ca160ef method=POST path=/client/application_decide.php user=3 application=8 decision=accept
+2026-07-18 10:35:01 [info] login.success request_id=0f26203fc9c862a9 method=POST path=/login.php user=4
+2026-07-18 10:35:07 [info] login.failure request_id=fbc2cca876c6636b method=POST path=/login.php user=anonymous
+2026-07-18 10:35:12 [info] login.success request_id=be9ad77857591795 method=POST path=/login.php user=1
+2026-07-18 10:35:23 [info] login.success request_id=dc6e06a4755f65b8 method=POST path=/login.php user=6
