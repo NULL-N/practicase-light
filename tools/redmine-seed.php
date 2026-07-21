@@ -7,12 +7,11 @@ declare(strict_types=1);
  *
  * 実行方法(リポジトリルートで。Redmine profile が起動済みであること):
  *   一部の課題だけ: docker compose exec -T app php tools/redmine-seed.php --ticket-root=<課題ルート> --ids=T-029,T-031
- *   全課題(Light): docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/tickets --all-light
+ *   この版の全課題: docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/tickets --all
  *   内容更新(seed 所有項目のみ): 上記に --update-content を付ける
  *
- * --all-light は Light 版の課題順設定(tools/check-edition.php の ticket_order)から
- * 対象を導出する — ID をこのファイルへ手書きしない。課題が正規手順で追加されれば
- * seed も自動で追随する。全課題版(ticket_order が空)では使えない(--ids を使う)。
+ * --all は edition設定から対象を導出する。Masterは検出した全課題、Lightは
+ * ticket_orderの課題だけを投入する。--all-lightは既存Light利用者向けの互換alias。
  *
  * 設計方針:
  * - 冪等キーは カスタムフィールド「PractiCase Ticket ID」だけ。件名や Redmine の連番では判定しない
@@ -32,12 +31,13 @@ if (PHP_SAPI !== 'cli') {
 
 require __DIR__ . '/lib/CheckSupport.php';
 require __DIR__ . '/lib/CheckEdition.php';
+require __DIR__ . '/redmine/SeedSelection.php';
 
 use function PractiCase\Check\discoverTickets;
 
 use PractiCase\Check\CheckEdition;
+use PractiCase\Redmine\SeedSelection;
 
-const PROJECT_IDENTIFIER = 'practicase-light';
 // seed の認証と ID 解決は bootstrap が保存した runtime 設定から読む(named volume 経由・
 // app からは読み取り専用)。API キーはソースコードへ固定しない
 const RUNTIME_CREDENTIALS_DEFAULT = '/var/practicase-redmine/seed-credentials.json';
@@ -147,7 +147,8 @@ function lookupIdByName(array $items, string $name): ?int
 // ---- 引数 -------------------------------------------------------------------
 $ticketRoot = null;
 $idsArg = null;
-$allLight = false;
+$allEdition = false;
+$legacyAllLight = false;
 $updateContent = false;
 $baseUrl = getenv('PRACTICASE_REDMINE_URL') ?: 'http://redmine:3000';
 foreach (array_slice($argv, 1) as $arg) {
@@ -155,24 +156,27 @@ foreach (array_slice($argv, 1) as $arg) {
         $ticketRoot = substr($arg, strlen('--ticket-root='));
     } elseif (str_starts_with($arg, '--ids=')) {
         $idsArg = substr($arg, strlen('--ids='));
+    } elseif ($arg === '--all') {
+        $allEdition = true;
     } elseif ($arg === '--all-light') {
-        $allLight = true;
+        $allEdition = true;
+        $legacyAllLight = true;
     } elseif ($arg === '--update-content') {
         $updateContent = true;
     } elseif (str_starts_with($arg, '--url=')) {
         $baseUrl = substr($arg, strlen('--url='));
     } else {
-        seedFail("不明な引数: {$arg}(使い方: --ticket-root=<dir> (--ids=T-xxx,T-yyy | --all-light) [--update-content] [--url=...])");
+        seedFail("不明な引数: {$arg}(使い方: --ticket-root=<dir> (--ids=T-xxx,T-yyy | --all) [--update-content] [--url=...])");
     }
 }
 if ($ticketRoot === null || $ticketRoot === '') {
     seedFail('--ticket-root=<課題ルート> は必須です');
 }
-if ($allLight && $idsArg !== null) {
-    seedFail('--ids と --all-light は同時に指定できません(どちらか一方)');
+if ($allEdition && $idsArg !== null) {
+    seedFail('--ids と --all は同時に指定できません(どちらか一方)');
 }
-if (!$allLight && ($idsArg === null || $idsArg === '')) {
-    seedFail('--ids=<教材ID をカンマ区切り> か --all-light のどちらかを指定してください');
+if (!$allEdition && ($idsArg === null || $idsArg === '')) {
+    seedFail('--ids=<教材ID をカンマ区切り> か --all のどちらかを指定してください');
 }
 if (!is_dir($ticketRoot)) {
     seedFail("--ticket-root が見つかりません: {$ticketRoot}");
@@ -185,40 +189,18 @@ foreach ($discovered['warnings'] as $warning) {
 }
 $tickets = $discovered['tickets'];
 
-if ($allLight) {
-    // 対象は Light 版の課題順設定(check-edition.php の ticket_order)が正本。
-    // ID をここへ手書きしない — 課題の追加は edition 更新に自動追随する
+if ($allEdition) {
     try {
         $edition = CheckEdition::load(__DIR__ . '/check-edition.php');
+        $selection = SeedSelection::resolve($edition, $tickets, $legacyAllLight);
     } catch (Throwable $e) {
-        seedFail('課題順設定(check-edition.php)を読めません: ' . $e->getMessage());
+        seedFail('edition設定からseed対象を決められません: ' . $e->getMessage());
     }
-    if ($edition->listMode !== 'ordered' || $edition->ticketOrder === []) {
-        seedFail('--all-light は Light 版でのみ使えます(この環境の課題順設定は ordered ではありません)。'
-            . '全課題版で特定の課題を投入する場合は --ids を使ってください');
-    }
-    $editionIds = $edition->ticketOrder;
-    if (count($editionIds) !== count(array_unique($editionIds))) {
-        seedFail('課題順設定に重複 ID があります(check-edition.php を確認してください)');
-    }
-    $requestedIds = $editionIds;
-    foreach ($editionIds as $id) {
-        // discoverTickets と同じ正規形式だけを許可し、edition 追加へ自動追随する
-        if (preg_match('/\A([TRDC]-[0-9]{3}|tutorial(-[0-9]+)?)\z/', $id) !== 1) {
-            seedFail("課題順設定に課題IDでないエントリがあります: {$id}");
-        }
-    }
-    // 対象数の突き合わせ(登録漏れ・余剰の双方向検査): edition と ticket 走査は同数・同集合
-    $editionOnly = array_values(array_diff($requestedIds, array_keys($tickets)));
-    if ($editionOnly !== []) {
-        seedFail('課題順設定にあるのに ticket.md が見つからない課題があります: ' . implode(', ', $editionOnly));
-    }
-    $discoveryOnly = array_values(array_diff(array_keys($tickets), $requestedIds));
-    if ($discoveryOnly !== []) {
-        seedFail('--ticket-root に課題順設定に無い課題があります(登録漏れの疑い): ' . implode(', ', $discoveryOnly));
-    }
+    $requestedIds = $selection['ids'];
+    $editionLabel = $selection['label'];
 } else {
     $requestedIds = array_values(array_filter(array_map('trim', explode(',', (string) $idsArg))));
+    $editionLabel = '指定ID';
 }
 
 // 作成前の全件検証 — 1件でも不正があれば Redmine へは 0 件も作成しない(fail-loud)
@@ -251,7 +233,7 @@ foreach ($requestedIds as $id) {
     }
 }
 echo 'redmine-seed: 対象 ' . count($requestedIds) . ' 課題'
-    . ($allLight ? '(Light edition)' : '(指定ID)') . " — 事前検証 OK\n";
+    . "({$editionLabel}) — 事前検証 OK\n";
 
 // ---- Redmine 到達性と前提(bootstrap 済み)の確認 ------------------------------
 [$health] = redmineRequest($baseUrl, 'GET', '/');
@@ -261,6 +243,7 @@ if ($health !== 200) {
 // tracker / カスタムフィールドの ID は runtime 設定が持つ(bootstrap が保存)。
 // admin 専用 API(/custom_fields.json)には依存しない — seed ユーザーは admin ではない
 $credentials = loadRuntimeCredentials();
+$projectIdentifier = (string) $credentials['project_identifier'];
 $trackerId = (int) $credentials['tracker_id'];
 $cfId = (int) $credentials['custom_field_id'];
 [$st, $statuses] = redmineRequest($baseUrl, 'GET', '/issue_statuses.json');
@@ -288,7 +271,7 @@ $skipped = 0;
 foreach ($requestedIds as $id) {
     $meta = $tickets[$id];
     $query = http_build_query([
-        'project_id' => PROJECT_IDENTIFIER,
+        'project_id' => $projectIdentifier,
         'status_id' => '*',
         "cf_{$cfId}" => $id,
         'limit' => 5,
@@ -300,17 +283,18 @@ foreach ($requestedIds as $id) {
     }
 
     $subject = "{$id}: " . (string) $meta['title'];
-    $dirName = basename((string) $meta['_dir']);
+    $ticketDir = str_replace('\\', '/', (string) $meta['_dir']);
+    $packsPos = strpos($ticketDir, 'packs/');
+    $ticketPath = ($packsPos === false ? basename($ticketDir) : substr($ticketDir, $packsPos)) . '/ticket.md';
     $description = implode("\n", [
         "PractiCase Ticket ID: {$id}",
-        '種別: ' . (string) ($meta['type'] ?? '-') . ' / 難易度: Level ' . (string) ($meta['level'] ?? '-')
-            . ' / 目安: ' . (string) ($meta['estimated_minutes'] ?? '-') . '分',
-        '依存: ' . (empty($meta['depends_on']) ? 'なし' : implode(', ', (array) $meta['depends_on'])),
-        "課題フォルダ: {$dirName}",
+        "課題ファイル: {$ticketPath}",
         '',
-        'この課題の正本は、教材リポジトリ内の上記課題フォルダの ticket.md です。',
-        '作業・提出・check の手順は教材の README と作業ルール(workflow)に従ってください。',
-        'Redmine 上では、このチケットの進行状態(New → In Progress → Resolved)を操作します。',
+        '次にすること:',
+        '1. 担当者を自分にする',
+        '2. ステータスを New から In Progress にする',
+        '3. 終了見込みをコメントして送信する',
+        "4. VS Codeで {$ticketPath} を開き、手順1から進める",
     ]);
 
     if ($count === 1) {
@@ -336,7 +320,7 @@ foreach ($requestedIds as $id) {
     }
 
     $payload = ['issue' => [
-        'project_id' => PROJECT_IDENTIFIER,
+        'project_id' => $projectIdentifier,
         'tracker_id' => $trackerId,
         'subject' => $subject,
         'description' => $description,
@@ -376,12 +360,12 @@ foreach ($requestedIds as $id) {
 }
 
 // ---- 廃止課題の検出(報告のみ・自動削除しない) --------------------------------
-$knownIds = $allLight ? $requestedIds : array_keys($tickets);
+$knownIds = $allEdition ? $requestedIds : array_keys($tickets);
 $orphans = [];
 $offset = 0;
 do {
     $query = http_build_query([
-        'project_id' => PROJECT_IDENTIFIER,
+        'project_id' => $projectIdentifier,
         'status_id' => '*',
         'limit' => 100,
         'offset' => $offset,

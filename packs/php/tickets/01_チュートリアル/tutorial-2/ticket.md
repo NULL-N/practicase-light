@@ -25,6 +25,10 @@ pack: php
 管理側の画面に「タグ別の案件数」を出す計画が進んでいます。画面は別チケットで作るので、
 まず**集計の部品だけ先に**作ってください(部品を先に作って画面を後で繋ぐのは、実務でよくある進め方です)。
 
+> Redmineでは作業項目を「チケット」と呼びます(英語表記やAPIでは`issue`)。
+> 課題の内容はこのファイル、進捗の記録はRedmine、と役割を分けています。
+> Redmineを使っている間は、`ticket.md`のfront matterを変更しません。
+
 ## 作るもの
 
 `packs/php/app/src/Support/TagSummary.php` の `countByTag()` の中身。
@@ -52,32 +56,72 @@ pack: php
 
 ## やること(この順で)
 
-1. Redmine でカスタムフィールド `PractiCase Ticket ID` が `tutorial-2` の issue を開く
-   - 担当者を自分にして、status を **New → In Progress** にする
-   - 前回の実績と比べた見積をコメント(note)へ一言書く
-   - Redmine を使う間、この `ticket.md` の front matter は変更しない
-2. `support/spec.md` と、**テスト(checks/tutorial-2.php)を読む**
-3. `TagSummary.php` の TODO に実装する(迷ったらこのフォルダの `support/hints.md` を1段ずつ)
-4. check を回す — **PASS になるまで**が実装です:
+1. Redmineへログインし、チケットを開く
+   - RedmineのPractiCaseプロジェクトで、`PractiCase Ticket ID`が`tutorial-2`のチケットを開く
+   - 担当者を自分にし、ステータスを`New` → `In Progress`にする
+   - 前回の実績と比べた見積もりをコメントに書き、送信する
+   - URLが`/issues/12`なら、チケット番号は`12`。この数字をブランチ名に使う
+   - 送信後、Redmineの画面は閉じずにVS Codeへ戻る
+2. ターミナルで、mainから作業用ブランチを作る
+
+   ```text
+   git switch main
+   git switch -c feature/redmine-<チケット番号>-tutorial-2-tag-summary
+   ```
+
+   `<チケット番号>`はRedmineのURLで確認した数字へ置き換えます。
+   Redmineが使えない場合は、代わりに`feature/tutorial-2-tag-summary`を使います。
+3. `support/spec.md`と、**テスト(checks/tutorial-2.php)を読む**
+4. `TagSummary.php`のTODOに実装する(迷ったらこのフォルダの`support/hints.md`を1段ずつ)
+5. checkを回す。**PASSになるまで**が実装です:
 
    ```text
    docker compose exec app php tools/check.php tutorial-2
    ```
 
-5. `reports/tutorial-2_fix_report.md` に3行報告(作ったもの / 工夫した点 / check の結果)
-6. Redmine の issue に `check tutorial-2: PASS` と報告ファイル名をコメントし、status を
-   **In Progress → Resolved → Closed** にする — 2周目クリアです
+6. `reports/tutorial-2_fix_report.md`に3行報告を書く(作ったもの / 工夫した点 / checkの結果)
+7. 変更を確認してcommitする
 
-> **Redmine が使えないときだけ**: この `ticket.md` の front matter を `open` →
-> `in_progress` → `resolved` → `closed` と更新して進めます。Redmine への自動同期はないため、
+   ```text
+   git status --short
+   git add packs/php/app/src/Support/TagSummary.php reports/tutorial-2_fix_report.md
+   git commit -m "tutorial-2: タグ別の案件数集計を実装"
+   ```
+
+8. mainへローカルmergeし、作業ブランチを削除する
+
+   ```text
+   git switch main
+   git merge --no-ff --no-edit feature/redmine-<チケット番号>-tutorial-2-tag-summary
+   git branch -d feature/redmine-<チケット番号>-tutorial-2-tag-summary
+   git status --short
+   ```
+
+   `<チケット番号>`は手順2と同じ数字へ置き換えます。
+   fallback時はブランチ名を`feature/tutorial-2-tag-summary`へ読み替えます。
+   最後の`git status --short`に何も表示されなければ、本番課題をcleanな状態で始められます。
+9. Redmineのチケットへ`check tutorial-2: PASS`と報告ファイル名をコメントし、
+   ステータスを`In Progress` → `Resolved` → `Closed`にする。2周目クリアです
+
+> **Redmineが使えないときだけ**: この`ticket.md`のfront matterを`open` →
+> `in_progress` → `resolved` → `closed`と更新して進めます。Redmineへの自動同期はないため、
 > 復旧後に必要な進捗だけ手動で合わせます。
+
+## この課題でやらないこと
+
+この課題ではPull Requestをまだ作成しません。
+ブランチ作成・commit・mainへのローカルmergeまでをもう一度行います。
+Pull Requestを含む本番の提出手順は、次のT-001で扱います。
 
 ## 完了条件
 
 - `check tutorial-2` が PASS(4つのテスト全部)
-- 3行の報告が reports/ にある
-- Redmine の issue が Closed になり、PASS結果のコメントが残っている
-  (fallback時は front matter が `closed`)
+- 3行の報告が`reports/`にある
+- 作業内容をcommitし、mainへmergeした
+- 作業ブランチを削除し、現在のブランチがmain
+- `git status --short`に何も表示されない
+- Redmineのチケットが`Closed`になり、PASS結果のコメントが残っている
+  (fallback時はfront matterが`closed`)
 
 ## 完了したら(次の一歩)
 

@@ -6,22 +6,22 @@
       "title": "はじめての1語修正",
       "subtitle": "肩慣らしクエスト — LV.1",
       "teaser": "まずはここから。Redmineで着手し、画面の誤表記を1語直して仕事を閉じるまで一周します(約30分)。",
-      "outro": "「Redmineで着手 → 見る → 探す → 直す → check → 報告 → Closed」を一周しました。",
+      "outro": "「Redmineで着手 → ブランチ作成 → 見る → 探す → 直す → check → 報告 → commit → merge → Closed」の1周目を完了しました。",
       "next": "tutorial-2",
       "steps": [
         {
-          "title": "Redmineからチケットを読む",
+          "title": "Redmineでチケットを開く",
           "why": "実務の仕事は必ずチケット(依頼票)から始まります。アプリや勘からは始めません。",
-          "do": "RedmineでPractiCase Ticket IDがtutorialのissueを開き、明るく表示されたticket.mdもざっと読みます。誰が・何に困っているかが掴めれば十分です。",
-          "file": "packs/php/tickets/01_チュートリアル/tutorial/ticket.md",
-          "anchor": "^# tutorial",
+          "do": "ブラウザのRedmineへ切り替え、PractiCase Ticket IDがtutorialのチケットを開きます。英語表記やAPIではissueと呼びます。題名と説明欄を確認します。",
+          "file": null,
+          "anchor": null,
           "dim": false,
           "actions": []
         },
         {
           "title": "Redmineで着手する",
           "why": "誰が何をやっているかを担当者と状態で共有するのがチーム開発の基本です。",
-          "do": "Redmineで自分を担当者に設定し、statusをNewからIn Progressへ変更します。ticket.mdのfront matterは変更しません。",
+          "do": "Redmineで自分を担当者に設定し、ステータスをNewからIn Progressへ変更します。ticket.mdのfront matterは変更しません。",
           "file": null,
           "anchor": null,
           "dim": false,
@@ -30,9 +30,27 @@
         {
           "title": "見積もりをコメントする",
           "why": "見積と実績のズレを知ることが、実務でずっと使う上達の物差しになります。",
-          "do": "この課題が何分で終わりそうかを考え、Redmineのコメント(note)に残します(終わったとき見比べます)。",
+          "do": "この課題が何分で終わりそうかを考え、Redmineのコメントに書いて送信します。Redmineの画面は閉じずにVS Codeへ戻ります。",
           "file": null,
           "anchor": null,
+          "dim": false,
+          "actions": []
+        },
+        {
+          "title": "作業用ブランチを作る",
+          "why": "チケットへの着手をコード上にも記録し、mainを作業途中の変更から守ります。",
+          "do": "RedmineのURLが/issues/12ならチケット番号は12です。ターミナルで git switch main、続けて git switch -c feature/redmine-<チケット番号>-tutorial-label を実行します。<チケット番号>は実際の数字へ置き換えます。Redmineが使えない場合は feature/tutorial-label を使います。",
+          "file": null,
+          "anchor": null,
+          "dim": false,
+          "actions": []
+        },
+        {
+          "title": "VS Codeでticket.mdを読む",
+          "why": "課題内容を確認してから、ブラウザで症状を再現します。",
+          "do": "明るく表示されたticket.mdをざっと読みます。誰が・何に困っているかが掴めれば十分です。",
+          "file": "packs/php/tickets/01_チュートリアル/tutorial/ticket.md",
+          "anchor": "^# tutorial",
           "dim": false,
           "actions": []
         },
@@ -74,13 +92,40 @@
           "actions": ["placeCheckCommand"]
         },
         {
-          "title": "報告してClosedにする",
+          "title": "報告ファイルを作る",
           "why": "実務の仕事は「直した」ではなく「直したと伝えた」で完了します。",
-          "do": "下のボタンで報告ファイルを作り、3行(起きていたこと/どこをどう直したか/checkの結果)を埋めます。RedmineへPASSと報告ファイル名をコメントし、In ProgressからResolved、Closedへ進めれば一周完了です。",
+          "do": "下のボタンで報告ファイルを作り、3行(起きていたこと/どこをどう直したか/checkの結果)を埋めます。",
           "file": null,
           "anchor": null,
           "dim": false,
           "actions": ["createFixReport"]
+        },
+        {
+          "title": "変更をcommitする",
+          "why": "修正と報告を1つの作業記録として確定させます。",
+          "do": "ターミナルで順に実行します: git status --short → git add packs/php/app/public/projects/show.php reports/tutorial_fix_report.md → git commit -m \"tutorial: 案件詳細の項目名を修正\"",
+          "file": null,
+          "anchor": null,
+          "dim": false,
+          "actions": []
+        },
+        {
+          "title": "mainへmergeする",
+          "why": "次のチケットをcleanな状態から始められるよう、完了した変更をmainへ統合します。",
+          "do": "ターミナルで順に実行します: git switch main → git merge --no-ff --no-edit feature/redmine-<チケット番号>-tutorial-label → git branch -d feature/redmine-<チケット番号>-tutorial-label → git status --short。fallback時はブランチ名をfeature/tutorial-labelへ読み替えます。最後のstatusに何も表示されないことを確認します。",
+          "file": null,
+          "anchor": null,
+          "dim": false,
+          "actions": []
+        },
+        {
+          "title": "RedmineでClosedにする",
+          "why": "状態を閉じるところまでが1枚のチケットです。",
+          "do": "RedmineへPASSと報告ファイル名をコメントし、ステータスをIn ProgressからResolved、Closedへ進めれば1周目完了です。",
+          "file": null,
+          "anchor": null,
+          "dim": false,
+          "actions": []
         }
       ]
     },
@@ -89,24 +134,42 @@
       "title": "はじめての部品づくり",
       "subtitle": "実装クエスト — LV.2",
       "teaser": "次はRedmineの流れを繰り返し、テストを仕様として読んで二重ループの部品を実装します(約40分)。",
-      "outro": "「Redmineで着手 → テストを読む → 作る → check → 報告 → Closed」ができました。次はいよいよ最初の本番課題 T-001 です(docs/00_はじめに/first-ticket-walkthrough.md を手元に)。",
+      "outro": "「Redmineで着手 → ブランチ作成 → テストを読む → 作る → check → 報告 → commit → merge → Closed」の2周目を完了しました。次はいよいよ最初の本番課題 T-001 です(docs/00_はじめに/first-ticket-walkthrough.md を手元に)。",
       "next": null,
       "steps": [
         {
-          "title": "Redmineからチケットを読む",
+          "title": "Redmineでチケットを開く",
           "why": "2周目は「直す」ではなく「作る」仕事です。まずは依頼の全体像から。",
-          "do": "RedmineでPractiCase Ticket IDがtutorial-2のissueを開き、明るく表示されたticket.mdも読みます。何を作るのか・どこに作るのかが掴めれば十分です。",
-          "file": "packs/php/tickets/01_チュートリアル/tutorial-2/ticket.md",
-          "anchor": "^# tutorial-2",
+          "do": "ブラウザのRedmineへ切り替え、PractiCase Ticket IDがtutorial-2のチケットを開きます。英語表記やAPIではissueと呼びます。題名と説明欄を確認します。",
+          "file": null,
+          "anchor": null,
           "dim": false,
           "actions": []
         },
         {
           "title": "Redmineで着手し、見積もる",
           "why": "着手の宣言と見積もりは、2周目からは自分の習慣にしていきます。",
-          "do": "Redmineで自分を担当者にし、statusをNewからIn Progressへ変更します。前回の実績を踏まえた見積をコメントに残します。ticket.mdのfront matterは変更しません。",
+          "do": "Redmineで自分を担当者にし、ステータスをNewからIn Progressへ変更します。前回の実績を踏まえた見積もりをコメントに書いて送信し、Redmineの画面は閉じずにVS Codeへ戻ります。ticket.mdのfront matterは変更しません。",
           "file": null,
           "anchor": null,
+          "dim": false,
+          "actions": []
+        },
+        {
+          "title": "作業用ブランチを作る",
+          "why": "2周目もチケットごとに変更を分け、mainを作業途中の変更から守ります。",
+          "do": "RedmineのURLが/issues/12ならチケット番号は12です。ターミナルで git switch main、続けて git switch -c feature/redmine-<チケット番号>-tutorial-2-tag-summary を実行します。<チケット番号>は実際の数字へ置き換えます。Redmineが使えない場合は feature/tutorial-2-tag-summary を使います。",
+          "file": null,
+          "anchor": null,
+          "dim": false,
+          "actions": []
+        },
+        {
+          "title": "VS Codeでticket.mdを読む",
+          "why": "課題内容を確認してから、仕様とテストを読みます。",
+          "do": "明るく表示されたticket.mdを読みます。何を作るのか・どこに作るのかが掴めれば十分です。",
+          "file": "packs/php/tickets/01_チュートリアル/tutorial-2/ticket.md",
+          "anchor": "^# tutorial-2",
           "dim": false,
           "actions": []
         },
@@ -156,9 +219,27 @@
           "actions": ["createFixReport"]
         },
         {
+          "title": "変更をcommitする",
+          "why": "実装と報告を1つの作業記録として確定させます。",
+          "do": "ターミナルで順に実行します: git status --short → git add packs/php/app/src/Support/TagSummary.php reports/tutorial-2_fix_report.md → git commit -m \"tutorial-2: タグ別の案件数集計を実装\"",
+          "file": null,
+          "anchor": null,
+          "dim": false,
+          "actions": []
+        },
+        {
+          "title": "mainへmergeする",
+          "why": "最初の本番課題をcleanな状態から始められるよう、完了した変更をmainへ統合します。",
+          "do": "ターミナルで順に実行します: git switch main → git merge --no-ff --no-edit feature/redmine-<チケット番号>-tutorial-2-tag-summary → git branch -d feature/redmine-<チケット番号>-tutorial-2-tag-summary → git status --short。fallback時はブランチ名をfeature/tutorial-2-tag-summaryへ読み替えます。最後のstatusに何も表示されないことを確認します。",
+          "file": null,
+          "anchor": null,
+          "dim": false,
+          "actions": []
+        },
+        {
           "title": "RedmineでClosedにする",
           "why": "状態を閉じるところまでが1枚のチケットです。",
-          "do": "RedmineへPASSと報告ファイル名をコメントし、In ProgressからResolved、Closedへ進めれば2周目クリアです。",
+          "do": "RedmineへPASSと報告ファイル名をコメントし、ステータスをIn ProgressからResolved、Closedへ進めれば2周目クリアです。",
           "file": null,
           "anchor": null,
           "dim": false,

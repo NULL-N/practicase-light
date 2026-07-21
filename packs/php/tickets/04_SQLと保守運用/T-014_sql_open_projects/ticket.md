@@ -29,7 +29,7 @@ pack: php
 
 ## やること
 
-1. status を `in_progress` にする
+1. Redmineで担当者を自分にし、ステータスを `New` → `In Progress` にする
 2. `docs/01_設計資料/database.md` で `projects` テーブルの列を確認する
 3. `packs/php/sql/T-014.sql` に SQL を書く
 4. check を実行する

@@ -29,7 +29,7 @@ SQL 初級の集計課題です。
 
 ## やること
 
-1. status を `in_progress` にする
+1. Redmineで担当者を自分にし、ステータスを `New` → `In Progress` にする
 2. `docs/01_設計資料/database.md` で `companies` と `projects` の関係を見る
 3. `packs/php/sql/T-015.sql` に SQL を書く
 4. check を実行する

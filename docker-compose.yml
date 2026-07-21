@@ -67,6 +67,8 @@ services:
       - REDMINE_DB_USERNAME=redmine
       - REDMINE_DB_PASSWORD=practicase-local-db
       - REDMINE_SECRET_KEY_BASE=practicase-local-secret-key-base-for-training-only
+      - PRACTICASE_REDMINE_PROJECT_IDENTIFIER=practicase-light
+      - PRACTICASE_REDMINE_PROJECT_NAME=PractiCase Light
     volumes:
       - redmine_files:/usr/src/redmine/files
       # bootstrap が seed 用 API キー等をここへ保存する(app 側は読み取り専用で参照)

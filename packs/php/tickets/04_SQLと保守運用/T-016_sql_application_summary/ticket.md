@@ -32,7 +32,7 @@ SQL 中級の入口です。
 
 ## やること
 
-1. status を `in_progress` にする
+1. Redmineで担当者を自分にし、ステータスを `New` → `In Progress` にする
 2. `docs/01_設計資料/database.md` で `projects` と `applications` の関係を見る
 3. `packs/php/sql/T-016.sql` に SQL を書く
 4. check を実行する

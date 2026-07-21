@@ -40,7 +40,8 @@ D-011〜D-013 で、案件タグ(F-20)の設計一式(基本設計・DB設計・
 
 ## やること(この順で)
 
-1. status を `in_progress` に。見積も先に
+1. Redmineで担当者を自分にし、ステータスを`New` → `In Progress`にする。
+   見積もコメントして送信する
 2. D-011(基本設計)・D-012(DB設計)・D-013(詳細設計)を読み返す
 3. `reports/D-014_test_spec.md` を作る(書き方は `support/spec.md` の型)
 4. check:
@@ -49,7 +50,8 @@ D-011〜D-013 で、案件タグ(F-20)の設計一式(基本設計・DB設計・
    docker compose exec app php tools/check.php D-014
    ```
 
-5. PR → `support/rubric.md` でセルフレビュー → retrospective → `closed`
+5. PR → `support/rubric.md` でセルフレビュー → retrospective →
+   RedmineへPASSをコメントし、ステータスを`Resolved` → `Closed`にする
 
 ## 完了条件
 

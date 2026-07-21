@@ -39,10 +39,11 @@ PostgreSQL `14.23`はPostgreSQL全体の最新版ではなく、Redmineの公式
 | `reports/`(このリポジトリ) | **提出物の正本**。check が見るのはここだけ |
 | Redmine | **進捗管理**。New → In Progress → Resolved → Closed をここで操作する |
 
-Redmine から `ticket.md` への自動の逆同期はありません。Redmine の issue 番号や
+Redmine から `ticket.md` への自動の逆同期はありません。Redmine のチケット番号や
 件名を課題の識別子として使わないでください — 課題の識別子は常に `ticket.md` の
 front matter にある `id`(例: `T-018`)です。Redmine 側では、同じ値がカスタム
 フィールド「PractiCase Ticket ID」に入っています。
+Redmineの英語画面やREST APIでは、チケットを`issue`と表記します。
 
 ## 2. 起動
 
@@ -90,11 +91,11 @@ docker compose --profile redmine exec -T redmine sh -c 'SECRET_KEY_BASE="$REDMIN
 全33課題をまとめて Redmine へ投入します:
 
 ```text
-docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/tickets --all-light
+docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/tickets --all
 ```
 
 - 対象は `packs/php/tickets/` から自動で読み取ります(ID を手で数える必要はありません)
-- **既に作った issue には触れません**(再実行しても新規は作られず、内容も変わりません)
+- **既に作ったチケットには触れません**(再実行しても新規は作られず、内容も変わりません)
 - 特定の課題だけ投入したい場合は `--ids=T-018,T-019` のように個別指定もできます
 
 ### 内容だけを最新化したいとき
@@ -102,7 +103,7 @@ docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/ti
 課題の説明文が教材更新で変わった場合、件名・説明・教材ID**だけ**を最新化できます:
 
 ```text
-docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/tickets --all-light --update-content
+docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/tickets --all --update-content
 ```
 
 **status・担当者・コメント(note)は変更しません**(あなたの作業記録は消えません)。
@@ -113,8 +114,8 @@ docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/ti
 2. 取り組む課題を選ぶ。カスタムフィールド「PractiCase Ticket ID」を見れば、
    `ticket.md` のどの課題に対応するかが分かります(例: `T-018`)
 3. 自分を担当者に設定し、作業見積をコメント(note)に残す
-4. issue の status を **New → In Progress** に変更し、
-   `feature/redmine-<issue番号>-<課題ID>-<短い名前>` の形式でブランチを作る
+4. チケットのステータスを **New → In Progress** に変更し、
+   `feature/redmine-<チケット番号>-<課題ID>-<短い名前>` の形式でブランチを作る
 5. `ticket.md` の指示に従ってコードを書き、`support/` の資料を読み、
    `docker compose exec app php tools/check.php <課題ID>` を実行する
 6. check が PASS したら、結果と提出物名をコメントに残し、status を
@@ -122,9 +123,9 @@ docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/ti
 7. 提出(PR 作成・reports への記載など)とセルフレビューまで終えたら
    **Resolved → Closed** にして完了する
 
-status の操作は Redmine の issue 編集画面から行います(front matter の `status` を
+ステータスの操作は Redmine のチケット編集画面から行います(front matter の `status` を
 書き換える必要はありません — Redmine を使う場合、進捗の正は Redmine 側です)。
-迷ったことや気づいたことも、issue のコメント(note)に残してください。Redmine と
+迷ったことや気づいたことも、チケットのコメント(note)に残してください。Redmine と
 `check.php` の自動同期はありません。PASS/FAIL は `check.php` の出力を確認し、結果を
 自分で Redmine に記録します。
 
@@ -268,7 +269,7 @@ Redmine 側のデータだけです)。`pcp_data` や他のプロジェクトの
 
 ```text
 docker compose --profile redmine exec -T redmine sh -c 'SECRET_KEY_BASE="$REDMINE_SECRET_KEY_BASE" bin/rails runner -' < tools/redmine/bootstrap.rb
-docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/tickets --all-light
+docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/tickets --all
 ```
 
 ## 9. 変更履歴(journal)の見分け方

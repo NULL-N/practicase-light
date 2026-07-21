@@ -36,7 +36,8 @@ pack: php
 
 ## やること
 
-1. status を `in_progress` に。見積も先に(**T-001 のときの実績と比べてどうか** — ドリルの見積は前回が基準です)
+1. Redmineで担当者を自分にし、ステータスを `New` → `In Progress` にする。見積もコメントして送信する
+   (**T-001 のときの実績と比べてどうか** — ドリルの見積は前回が基準です)
 2. `support/spec.md` で仕様の場所を確認 → 境界を自分の言葉で決める(「2000文字くらい」を仕様の数字に直す)
 3. 調査 → 修正 → check:
 
@@ -44,7 +45,8 @@ pack: php
    docker compose exec app php tools/check.php T-012
    ```
 
-4. PR を作る(fix_report の型)→ `support/rubric.md` でセルフレビュー → retrospective → `closed` に
+4. PR を作る(fix_report の型)→ `support/rubric.md` でセルフレビュー → retrospective →
+   Redmineへ結果をコメントし、ステータスを `Resolved` → `Closed` にする
 
 ## 完了条件
 

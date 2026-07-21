@@ -35,7 +35,8 @@ pack: php
 
 ## やること
 
-1. status を `in_progress` にする
+1. Redmineで担当者を自分にし、ステータスを`New` → `In Progress`にする。
+   見積もコメントして送信する
 1. `packs/php/app/src/Service/AuthService.php` を開き、ログインが失敗する条件を
    上から順に読む(`if` が3つ並んでいます)。ファイルが見つからないときは、
    VS Code で **Ctrl+P** を押し、`AuthService.php` と入力すると開けます

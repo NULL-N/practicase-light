@@ -37,7 +37,8 @@ F-20(案件タグ)の基本設計が確定しました。次は、**タグを DB
 
 ## やること(この順で)
 
-1. status を `in_progress` に。見積も先に
+1. Redmineで担当者を自分にし、ステータスを`New` → `In Progress`にする。
+   見積もコメントして送信する
 2. `support/spec.md` で前提(F-20 の確定内容)を確認する
 3. `docs/01_設計資料/database.md` に:
    - `tags` と `project_tags` のテーブル定義を追加(既存の 3.x 節の表の型で)
@@ -49,7 +50,8 @@ F-20(案件タグ)の基本設計が確定しました。次は、**タグを DB
    docker compose exec app php tools/check.php D-012
    ```
 
-5. PR → `support/rubric.md` でセルフレビュー → retrospective → `closed`
+5. PR → `support/rubric.md` でセルフレビュー → retrospective →
+   RedmineへPASSをコメントし、ステータスを`Resolved` → `Closed`にする
 
 ## 完了条件
 

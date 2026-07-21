@@ -37,7 +37,8 @@ D-010 の確認事項に、田淵さんから回答が返ってきました(`sup
 
 ## やること(この順で)
 
-1. status を `in_progress` に。見積も先に
+1. Redmineで担当者を自分にし、ステータスを`New` → `In Progress`にする。
+   見積もコメントして送信する
 2. `support/spec.md` で確定要件を読む(D-010 の回答)
 3. `docs/01_設計資料/features.md` を開き、F-09 の後に **F-20** の節を追加する
    (概要/付けるルール/絞り込みのルール/やらないこと)
@@ -49,7 +50,8 @@ D-010 の確認事項に、田淵さんから回答が返ってきました(`sup
    docker compose exec app php tools/check.php D-011
    ```
 
-7. PR → `support/rubric.md` でセルフレビュー → retrospective → `closed`
+7. PR → `support/rubric.md` でセルフレビュー → retrospective →
+   RedmineへPASSをコメントし、ステータスを`Resolved` → `Closed`にする
 
 ## 完了条件
 

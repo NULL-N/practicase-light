@@ -37,7 +37,8 @@ pack: php
 
 ## やること(この順で)
 
-1. status を `in_progress` に。見積も先に書く(retrospective テンプレの「見積」欄)
+1. Redmineで担当者を自分にし、ステータスを`New` → `In Progress`にする。
+   見積もコメントして送信する(retrospective テンプレの「見積」欄)
 2. メールを読み、**曖昧な言葉に印を付ける**(例:「ジャンルみたいなもの」)
 3. `support/spec.md` の「提出物の型」に沿って、`reports/D-010_requirement_note.md` を書く
 4. check で確認:
@@ -46,7 +47,8 @@ pack: php
    docker compose exec app php tools/check.php D-010
    ```
 
-5. PR を作る → `support/rubric.md` でセルフレビュー → retrospective → `closed`
+5. PR を作る → `support/rubric.md` でセルフレビュー → retrospective →
+   RedmineへPASSをコメントし、ステータスを`Resolved` → `Closed`にする
 
 ## 完了条件
 

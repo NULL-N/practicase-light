@@ -128,7 +128,7 @@ final class CheckRenderer
     {
         echo "\n";
         echo "結果: PASS — 提出(Pull Request 作成)に進めます\n";
-        echo "提出後: support/rubric.md でセルフチェック → (debrief がある課題は突き合わせ)→ 振り返りを書いて closed に\n";
+        echo "提出後: support/rubric.md でセルフチェック → (debrief がある課題は突き合わせ)→ 振り返りを書く → RedmineへPASSをコメント → Resolved → Closed\n";
     }
 
     /**

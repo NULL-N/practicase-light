@@ -27,7 +27,7 @@ ul, ol { padding-left: 22px; }
 <tr><th>項目</th><th>完了状態</th></tr>
 <tr><td>環境</td><td><code>docker compose --profile redmine up -d</code> で app・pcp・Redmine が起動している</td></tr>
 <tr><td>DB</td><td><code>docker compose exec app php tools/init-db.php</code> を実行済み</td></tr>
-<tr><td>Redmine</td><td>bootstrap と全33課題の seed を実行済み</td></tr>
+<tr><td>Redmine</td><td>bootstrap とこの版の全課題(Master 65件 / Light 33件)の seed を実行済み</td></tr>
 <tr><td>T-000</td><td><code>check T-000</code> が PASS、完了報告が <code>reports/</code> にあり、Redmine で Closed</td></tr>
 <tr><td>tutorial</td><td><code>check tutorial</code> が PASS、3行報告が <code>reports/</code> にあり、Redmine で Closed</td></tr>
 <tr><td>tutorial-2</td><td><code>check tutorial-2</code> が PASS、3行報告が <code>reports/</code> にあり、Redmine で Closed</td></tr>
@@ -58,13 +58,13 @@ git commit -m "T-000: セットアップ開始"</pre>
 <h2>3. アプリを起動する</h2>
 <pre>docker compose --profile redmine up -d
 docker compose exec app php tools/init-db.php</pre>
-<p>Redmine を初期化し、全33課題を投入します。</p>
+<p>Redmine を初期化し、この版に含まれる全課題を投入します。</p>
 <p>PowerShell:</p>
 <pre>Get-Content -Raw tools/redmine/bootstrap.rb | docker compose --profile redmine exec -T redmine sh -c 'SECRET_KEY_BASE="$REDMINE_SECRET_KEY_BASE" bin/rails runner -'
-docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/tickets --all-light</pre>
+docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/tickets --all</pre>
 <p>Git Bash:</p>
 <pre>docker compose --profile redmine exec -T redmine sh -c 'SECRET_KEY_BASE="$REDMINE_SECRET_KEY_BASE" bin/rails runner -' &lt; tools/redmine/bootstrap.rb
-docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/tickets --all-light</pre>
+docker compose exec -T app php tools/redmine-seed.php --ticket-root=packs/php/tickets --all</pre>
 <p>ブラウザで次を開きます。</p>
 <pre>http://localhost:8180/login.php</pre>
 <p><code>docs/03_参考資料/world.md</code> の利用者名簿にあるアカウントでログインできれば起動成功です。</p>
@@ -82,19 +82,34 @@ practicase / practicase123</pre>
 <p>開くファイル:</p>
 <pre>packs/php/tickets/00_はじめに/T-000_setup/ticket.md</pre>
 <ol>
-<li>Redmine で <code>PractiCase Ticket ID = T-000</code> の issue を開く</li>
-<li>自分を担当者にし、見積をコメントして <strong>New → In Progress</strong> にする</li>
+<li>Redmine で <code>PractiCase Ticket ID = T-000</code> のチケットを開く</li>
+<li>自分を担当者にし、見積をコメントして送信し、<strong>New → In Progress</strong> にする</li>
+<li>VS Code へ戻り、Redmine の URL 末尾にあるチケット番号を使って branch を作る
+<pre>git switch main
+git status --short
+git switch -c feature/redmine-&lt;チケット番号&gt;-T-000-setup</pre></li>
 <li>起動確認を行う</li>
 <li><code>docs/templates/setup_report.md</code> を <code>reports/T-000_setup_report.md</code> へコピーして、完了報告を書く</li>
 <li>check を実行する</li>
 </ol>
 <pre>docker compose exec app php tools/check.php T-000</pre>
-<p><code>結果: PASS</code> になったら、その結果と報告ファイル名を Redmine にコメントし、<strong>In Progress → Resolved → Closed</strong> にします。</p>
+<p><code>結果: PASS</code> になったら、報告を commit し、main へローカル merge します。</p>
+<pre>git add reports/T-000_setup_report.md
+git commit -m "T-000: セットアップ完了を報告"
+git switch main
+git merge --no-ff --no-edit feature/redmine-&lt;チケット番号&gt;-T-000-setup
+git branch -d feature/redmine-&lt;チケット番号&gt;-T-000-setup
+git status --short</pre>
+<p>最後に Redmine へ戻り、その結果と報告ファイル名をコメントして送信し、<strong>In Progress → Resolved → Closed</strong> にします。</p>
 
 <h2>6. tutorial を始める</h2>
-<p>Redmine で <code>PractiCase Ticket ID = tutorial</code> の issue を開き、自分を担当者にして、見積をコメントし、<strong>New → In Progress</strong> にします。</p>
+<p>Redmine で <code>PractiCase Ticket ID = tutorial</code> のチケットを開き、自分を担当者にして、見積をコメントして送信し、<strong>New → In Progress</strong> にします。</p>
 <p>開くファイル:</p>
 <pre>packs/php/tickets/01_チュートリアル/tutorial/ticket.md</pre>
+<p>送信したら VS Code へ戻り、Redmine の URL 末尾にあるチケット番号を使って branch を作ります。</p>
+<pre>git switch main
+git status --short
+git switch -c feature/redmine-&lt;チケット番号&gt;-tutorial-label</pre>
 <p>ブラウザで次を開きます。</p>
 <pre>http://localhost:8180/login.php?tutorial=1</pre>
 <p>画面の案内に従い、ログイン、案件一覧、案件詳細へ進みます。明るく表示されている行の項目名を見て、一覧と違う言葉を見つけます。</p>
@@ -110,12 +125,24 @@ practicase / practicase123</pre>
 <pre>何が起きていたか:
 どこをどう直したか:
 check の結果:</pre>
-<p>最後に <code>check tutorial: PASS</code> と報告ファイル名を Redmine にコメントし、<strong>In Progress → Resolved → Closed</strong> にします。</p>
+<p>変更を commit し、main へローカル merge します。</p>
+<pre>git status --short
+git add packs/php/app/public/projects/show.php reports/tutorial_fix_report.md
+git commit -m "tutorial: 案件詳細の項目名を修正"
+git switch main
+git merge --no-ff --no-edit feature/redmine-&lt;チケット番号&gt;-tutorial-label
+git branch -d feature/redmine-&lt;チケット番号&gt;-tutorial-label
+git status --short</pre>
+<p>最後に Redmine へ戻り、<code>check tutorial: PASS</code> と報告ファイル名をコメントして送信し、<strong>In Progress → Resolved → Closed</strong> にします。</p>
 
 <h2>7. tutorial-2 を始める</h2>
-<p>Redmine で <code>PractiCase Ticket ID = tutorial-2</code> の issue を開き、自分を担当者にして、見積をコメントし、<strong>New → In Progress</strong> にします。</p>
+<p>Redmine で <code>PractiCase Ticket ID = tutorial-2</code> のチケットを開き、自分を担当者にして、見積をコメントして送信し、<strong>New → In Progress</strong> にします。</p>
 <p>開くファイル:</p>
 <pre>packs/php/tickets/01_チュートリアル/tutorial-2/ticket.md</pre>
+<p>送信したら VS Code へ戻り、main から2周目の branch を作ります。</p>
+<pre>git switch main
+git status --short
+git switch -c feature/redmine-&lt;チケット番号&gt;-tutorial-2-tag-summary</pre>
 <p>最初に読むファイル:</p>
 <pre>packs/php/app/tests/checks/tutorial-2.php</pre>
 <p>この課題では、テストが仕様書の役割を持っています。4つの <code>test(...)</code> を読み、何を入力すると何が返るべきかを確認します。</p>
@@ -127,7 +154,15 @@ check の結果:</pre>
 <pre>作ったもの:
 工夫した点:
 check の結果:</pre>
-<p>最後に <code>check tutorial-2: PASS</code> と報告ファイル名を Redmine にコメントし、<strong>In Progress → Resolved → Closed</strong> にします。</p>
+<p>変更を commit し、main へローカル merge します。</p>
+<pre>git status --short
+git add packs/php/app/src/Support/TagSummary.php reports/tutorial-2_fix_report.md
+git commit -m "tutorial-2: タグ別の案件数集計を実装"
+git switch main
+git merge --no-ff --no-edit feature/redmine-&lt;チケット番号&gt;-tutorial-2-tag-summary
+git branch -d feature/redmine-&lt;チケット番号&gt;-tutorial-2-tag-summary
+git status --short</pre>
+<p>最後に Redmine へ戻り、<code>check tutorial-2: PASS</code> と報告ファイル名をコメントして送信し、<strong>In Progress → Resolved → Closed</strong> にします。</p>
 
 <h2>8. 次に進めるか確認する</h2>
 <ul>
@@ -136,6 +171,8 @@ check の結果:</pre>
 <li><code>check tutorial</code> が PASS</li>
 <li><code>check tutorial-2</code> が PASS</li>
 <li><code>reports/</code> に3本の報告がある</li>
+<li>T-000、tutorial、tutorial-2 の変更を commit し、main へローカル merge した</li>
+<li>現在の branch が main で、<code>git status --short</code> に何も表示されない</li>
 <li>Redmine で <code>T-000</code>、<code>tutorial</code>、<code>tutorial-2</code> が Closed</li>
 </ul>
 <p>次に開くファイル:</p>

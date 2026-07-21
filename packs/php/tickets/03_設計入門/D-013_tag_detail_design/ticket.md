@@ -36,7 +36,8 @@ F-20 の基本設計(D-011)と DB 設計(D-012)は確定しました。
 
 ## やること(この順で)
 
-1. status を `in_progress` に。見積も先に
+1. Redmineで担当者を自分にし、ステータスを`New` → `In Progress`にする。
+   見積もコメントして送信する
 2. `support/spec.md` の節立てに沿って `reports/D-013_detail_design.md` を書く
 3. check:
 
@@ -44,7 +45,8 @@ F-20 の基本設計(D-011)と DB 設計(D-012)は確定しました。
    docker compose exec app php tools/check.php D-013
    ```
 
-4. PR → `support/rubric.md` でセルフレビュー → retrospective → `closed`
+4. PR → `support/rubric.md` でセルフレビュー → retrospective →
+   RedmineへPASSをコメントし、ステータスを`Resolved` → `Closed`にする
 
 ## 完了条件
 

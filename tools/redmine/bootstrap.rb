@@ -16,8 +16,8 @@
 #   runtime 設定ファイル(named volume)へ保存し、seed ツールがそこから読む。
 #   再実行しても既存キーを不要にローテートしない(reset 時だけ新しい値になる)
 
-PROJECT_IDENTIFIER = 'practicase-light'
-PROJECT_NAME = 'PractiCase Light'
+PROJECT_IDENTIFIER = ENV.fetch('PRACTICASE_REDMINE_PROJECT_IDENTIFIER', 'practicase-master')
+PROJECT_NAME = ENV.fetch('PRACTICASE_REDMINE_PROJECT_NAME', 'PractiCase Master')
 TRACKER_NAME = 'PractiCase課題'
 CUSTOM_FIELD_NAME = 'PractiCase Ticket ID'
 LEARNER_LOGIN = 'practicase'
@@ -28,6 +28,11 @@ RUNTIME_DIR = '/practicase-runtime' # compose の redmine_runtime volume
 RUNTIME_FILE = File.join(RUNTIME_DIR, 'seed-credentials.json')
 
 changes = []
+
+unless PROJECT_IDENTIFIER.match?(/\A[a-z0-9][a-z0-9-]*\z/)
+  raise 'PRACTICASE_REDMINE_PROJECT_IDENTIFIERは英小文字・数字・ハイフンだけを使用してください'
+end
+raise 'PRACTICASE_REDMINE_PROJECT_NAMEは空にできません' if PROJECT_NAME.strip.empty?
 
 # 1. 既定データ(ステータス・ロール・ワークフロー等)。空なら英語で投入する —
 #    ステータス名 New / In Progress / Resolved / Closed を status マッピングの正とするため

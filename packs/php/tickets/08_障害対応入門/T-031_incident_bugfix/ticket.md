@@ -56,7 +56,8 @@ if ($result === null) {
 
 ## やること
 
-1. status を `in_progress` にする
+1. Redmineで担当者を自分にし、ステータスを`New` → `In Progress`にする。
+   見積もコメントして送信する
 2. `reports/T-029.md` の `direct_cause` / `remediation_plan` を読み直す
 3. `packs/php/app/public/client/application_decide.php` の該当箇所に null 防御を復元する
 4. check を実行する

@@ -46,7 +46,8 @@ live ログは体験用です。`docker compose exec app tail -f packs/php/app/l
 
 ## やること
 
-1. status を `in_progress` にする
+1. Redmineで担当者を自分にし、ステータスを`New` → `In Progress`にする。
+   見積もコメントして送信する
 1. 固定ログをターミナルで調査する。まず全体を眺め、次に絞り込む:
 
 ```text

@@ -34,7 +34,8 @@ T-019 では、自分の手で `AuthService::attempt()` を直しました。今
 
 ## やること
 
-1. status を `in_progress` にする
+1. Redmineで担当者を自分にし、ステータスを`New` → `In Progress`にする。
+   見積もコメントして送信する
 2. `support/pr-description.md` を読む(何を・なぜ直したと書いてあるか)
 3. `support/diff.patch` を読む(実際に適用はしない。読むだけでよい)
 4. `support/related-support/spec.md` を参考に、T-018・T-019 で確認した仕様と照らし合わせる

@@ -17,4 +17,4 @@
 
 - [ ] scope 外を変更していないか(CHG-1)。無関係な整形をしていないか(CHG-2)
 - [ ] PR 本文(fix_report)で「原因」と「影響範囲」を自分の言葉で書いたか
-- [ ] 振り返り(retrospective)を書いて closed にしたか
+- [ ] 振り返り(retrospective)を書き、Redmineへ結果をコメントして`Closed`にしたか

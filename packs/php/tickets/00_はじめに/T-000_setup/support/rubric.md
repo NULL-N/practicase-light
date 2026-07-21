@@ -13,8 +13,11 @@
 
 - [ ] 詰まった点を「何が起きて・どう調べて・どう解決したか」の形で書いたか(詰まらなかったならそれでよい)
 
-- [ ] status を運用したか — この ticket.md の
-      **先頭の `---` で囲まれた部分(front matter)**の `status:` を
-      自分で直接編集する(着手時 `in_progress` → 提出時 `resolved` → 振り返り後 `closed`)。
-      チケットファイルは編集してよい。
-      reports/ とチケットは check の scope 検査で常に許可されている
+- [ ] Redmineで担当者を自分にし、見積をコメントして送信し、
+      `New` → `In Progress` → `Resolved` → `Closed`と進めたか
+
+- [ ] 完了報告をcommitしてmainへローカルmergeし、現在のbranchがmain、
+      `git status --short`に何も表示されない状態にしたか
+
+- [ ] Redmineが使えない場合だけ、front matterの`status`を
+      `open` → `in_progress` → `resolved` → `closed`と更新したか
