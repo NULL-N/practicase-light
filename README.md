@@ -2,7 +2,7 @@
   <img src="docs/assets/light-banner.svg" alt="PractiCase Light for PHP" width="100%">
 </p>
 <p align="center">
-  <img src="docs/assets/light-badges.svg" alt="33 課題 / PHP / Docker / Redmine / SQL / 設計トレーニング">
+  <img src="docs/assets/light-badges.svg" alt="33 課題 / PHP 8.5 / Docker / Redmine / 実務フロー / 無料・課金なし">
 </p>
 
 # PractiCase Light for PHP
@@ -12,15 +12,15 @@
 PractiCase Light for PHPは、チケットを受け取り、コードを調査・修正し、テストし、報告して閉じるまでを
 繰り返す実務体験型のエンジニア育成教材です。入門向けの33課題が含まれます。
 
-学習が起きる場所は、完成済みのアプリの中ではなく、
-**Redmine × VS Code × check × 報告**の仕事の流れの中です。
+完成済みのアプリを操作するだけではなく、
+**Redmine × VS Code × check × 報告**という仕事の流れを通して学びます。
 
 ## 必要な環境
 
-- Git
-- Docker Desktop(Docker Composeを含む)
-- VS Code
-- Webブラウザ
+- GitHubアカウント(教材の取得・Pull Requestに使用)
+- Git(ブランチ作成・commit・mergeに使用)
+- VS Code(コードの調査・修正に使用)
+- Docker Desktop(Docker Composeを含む。教材環境の起動に使用)
 
 RedmineとPostgreSQLをホストへ個別にインストールする必要はありません。
 Docker Composeが固定済みのイメージを取得・起動します。

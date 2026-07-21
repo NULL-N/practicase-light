@@ -26,7 +26,7 @@
     <circle cx="880" cy="90" r="3"/>
   </g>
 
-  <!-- connector-line motif, echoing the ticket -> code -> check flow -->
+  <!-- connector-line motif, echoing the Redmine -> VS Code -> check -> report flow -->
   <g stroke="url(#accent)" stroke-width="3" fill="none" opacity="0.9" stroke-linecap="round">
     <path d="M 60 168 L 150 168"/>
     <path d="M 190 168 L 280 168"/>
@@ -39,8 +39,8 @@
     <circle cx="410" cy="168" r="7"/>
   </g>
   <g font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="15" fill="#dce9ff">
-    <text x="60" y="196" text-anchor="middle">Ticket</text>
-    <text x="190" y="196" text-anchor="middle">Code</text>
+    <text x="60" y="196" text-anchor="middle">Redmine</text>
+    <text x="190" y="196" text-anchor="middle">VS Code</text>
     <text x="320" y="196" text-anchor="middle">Check</text>
     <text x="410" y="196" text-anchor="middle">Report</text>
   </g>
@@ -50,6 +50,6 @@
     PractiCase <tspan fill="#7ee7d8">Light</tspan> <tspan font-size="30" fill="#c9d8f5">for PHP</tspan>
   </text>
   <text x="62" y="130" font-family="Segoe UI, Yu Gothic UI, sans-serif" font-size="18" fill="#c9d8f5">
-    実務体験型エンジニア育成教材 &#8211; はじめての実務修正を、チケットから体験する
+    コードを書く力を、今以上に現場で通用する力へ。
   </text>
 </svg>

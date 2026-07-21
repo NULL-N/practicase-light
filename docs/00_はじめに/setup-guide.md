@@ -24,6 +24,26 @@ T-000 の完了条件は次の6つです。
 
 Windows / macOS / Linux で同じ手順を使えます。`make` は不要です。
 
+### Gitが入っていない場合
+
+Windowsでは、PowerShellで次のコマンドを実行します。
+
+```text
+winget install --id Git.Git -e --source winget
+```
+
+`winget`を利用できない場合は、[Git公式のWindows向けページ](https://git-scm.com/install/windows)から
+Git for Windowsをインストールします。macOS / Linuxでは、
+[Git公式のインストール案内](https://git-scm.com/install/)からOSに合う手順を選んでください。
+
+インストール後はPowerShellまたはターミナルを開き直し、次のコマンドで確認します。
+
+```text
+git --version
+```
+
+バージョン番号が表示されれば準備完了です。
+
 ## 1. 教材を自分のものにする
 
 この教材は、コード・Pull Request・レビュー・CIを実務と同じ流れで体験するため、GitHubの利用を前提とします。
