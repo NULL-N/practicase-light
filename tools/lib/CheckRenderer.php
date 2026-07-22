@@ -127,8 +127,9 @@ final class CheckRenderer
     public function resultPass(): void
     {
         echo "\n";
-        echo "結果: PASS — 提出(Pull Request 作成)に進めます\n";
-        echo "提出後: support/rubric.md でセルフチェック → (debrief がある課題は突き合わせ)→ 振り返りを書く → RedmineへPASSをコメント → Resolved → Closed\n";
+        echo "結果: PASS — ticket.md の手順へ戻ります\n";
+        echo "次の操作: support/rubric.md の「提出前」を確認し、この課題のticket.mdに従ってください\n";
+        echo "注意: commit・push・Pull Request・debrief・Redmine完了のタイミングは課題ごとに異なります\n";
     }
 
     /**

@@ -5,14 +5,15 @@
 **[start-to-tutorial-guide.md](start-to-tutorial-guide.md)**(印刷用の
 **[HTML 版](start-to-tutorial-guide.html)**)を使ってください。
 
-T-000 の完了条件は次の6つです。
+T-000 の完了条件は次の7つです。
 
 1. 教材を自分の GitHub リポジトリへコピーする
 2. アプリ・PCP・Redmineを起動し、ブラウザでログインする
 3. Redmineを初期設定し、この版の全課題を投入する
 4. RedmineでT-000へ着手し、作業用branchを作る
 5. セットアップ結果を報告書にまとめ、T-000のcheckを通す
-6. 報告をcommit・mainへmergeし、RedmineのチケットをClosedにする
+6. commit前rubricを確認し、報告をcommit・pushして単独Pull Requestをmergeする
+7. ローカルmainを同期し、Redmineへ結果を報告してチケットをClosedにする
 
 ## 前提(すべて無料)
 
@@ -135,14 +136,29 @@ docker compose exec app php tools/check.php
 
 1. Redmineで`PractiCase Ticket ID`が`T-000`のチケットを開き、担当者・見積・`In Progress`を記録する
 2. Redmineのチケット番号を使ってmainから作業用branchを作る
-3. `docs/templates/setup_report.md`を`reports/T-000_setup_report.md`としてコピーする
-4. テンプレートの4見出しへ、自分の環境で確認した事実を書く
+3. Git Bashでは`cp`、PowerShellでは`Copy-Item`を使い、`docs/templates/setup_report.md`を
+   `reports/T-000_setup_report.md`としてコピーする
+4. VS Codeでコピーした報告書を開き、テンプレートの4見出しへ自分の環境で確認した事実を書く
 5. T-000のcheckを実行する
-6. 報告をcommitし、mainへローカルmergeする
-7. RedmineへPASS結果をコメントし、`Resolved` → `Closed`にする
+6. commit前に`support/rubric.md`の「提出前」を確認し、問題があれば報告書を直してcheckをやり直す
+7. 報告をcommitして作業ブランチをpushし、GitHubでPull Requestを作ってmergeする
+8. ローカルmainを`git pull --ff-only`で同期する
+9. Pull Requestをmergeした後、セットアップで分かったことを振り返りとして1文書く
+10. RedmineへPASS結果・Pull RequestのURL・報告ファイル名・振り返りをコメントし、`Resolved` → `Closed`にする
+11. `support/rubric.md`の「提出後」を確認する
 
 ```text
 docker compose exec app php tools/check.php T-000
+```
+
+報告書のコピーコマンド:
+
+```text
+# Git Bash
+cp docs/templates/setup_report.md reports/T-000_setup_report.md
+
+# PowerShell
+Copy-Item docs/templates/setup_report.md reports/T-000_setup_report.md
 ```
 
 テンプレートは必要な報告項目を示すもので、答えを埋めた見本ではありません。

@@ -13,8 +13,15 @@
 - [ ] 境界値を確認したか(最小・最大・本日。TEST-3)
 - [ ] check T-001 と共通テストの両方が通ったか
 
-## 提出
+## 提出前
 
+- [ ] この課題のcheckを実行し、最後に「結果: PASS」を確認したか
 - [ ] scope 外を変更していないか(CHG-1)。無関係な整形をしていないか(CHG-2)
 - [ ] PR 本文(fix_report)で「原因」と「影響範囲」を自分の言葉で書いたか
-- [ ] 振り返り(retrospective)を書き、Redmineへ結果をコメントして`Closed`にしたか
+
+## 提出後
+
+- [ ] 提出用Pull Requestをmergeしたか
+- [ ] 振り返り(retrospective)を書いたか
+- [ ] RedmineへPASS結果・Pull RequestのURL・振り返りのファイル名をコメントし、
+      チケットを`Closed`にしたか

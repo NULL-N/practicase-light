@@ -34,6 +34,25 @@ pack: php
 (仕様を読む → 境界を決める → 検証がどこにあるべきかを探す → 直す → check)を、自分で再現してください。
 場所は前回と違います。でも、探し方は変わりません。
 
+## 着手時の作業branch
+
+課題内容を確認したら、ファイルを変更する前に次の順で着手します。
+
+1. Redmineで`PractiCase Ticket ID`が`T-012`のチケットを開き、担当者を自分にして、
+   見積をコメントし、ステータスを`New` → `In Progress`にする
+2. VS Codeで教材フォルダを開いた状態のターミナルから、mainを更新して作業branchを作る
+
+   ```text
+   git switch main
+   git pull --ff-only
+   git status --short
+   git switch -c feature/redmine-<チケット番号>-T-012-message-length
+   ```
+
+`<チケット番号>`はRedmineのURL末尾の数字です。URLが`/issues/3`なら、branch名は
+`feature/redmine-3-T-012-message-length`です。`git status --short`に何か表示された場合は、branchを作る前に変更内容を確認します。
+この後の課題固有手順に同じRedmine操作がある場合は、繰り返しません。
+
 ## やること
 
 1. Redmineで担当者を自分にし、ステータスを `New` → `In Progress` にする。見積もコメントして送信する
@@ -45,8 +64,13 @@ pack: php
    docker compose exec app php tools/check.php T-012
    ```
 
-4. PR を作る(fix_report の型)→ `support/rubric.md` でセルフレビュー → retrospective →
-   Redmineへ結果をコメントし、ステータスを `Resolved` → `Closed` にする
+4. `support/rubric.md`の「提出前」でセルフレビューし、問題があれば修正してcheckをやり直す
+5. 変更をcommit・pushし、Pull Requestを作る(fix_reportの型)。この時点ではまだmergeしない
+6. Pull Requestをmergeする
+7. `reports/T-012_retrospective.md`に振り返りを書く
+8. RedmineへPASS結果・Pull RequestのURL・振り返りのファイル名をコメントし、
+   ステータスを`Resolved` → `Closed`にする
+9. `support/rubric.md`の「提出後」を確認する
 
 ## 完了条件
 

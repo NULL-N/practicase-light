@@ -3,6 +3,10 @@
 各課題は「ブランチを切る → 直す → コミット → Pull Request → マージ」で進めます。
 実務で毎日使う流れですが、初めてだと戸惑うところなので、ここに全手順を置きます。
 
+T-000は単独でPull Requestを作ります。tutorialとtutorial-2は、それぞれcommit・mainへの
+ローカルmergeまで行い、2本をまとめて1つのPull Requestを作ります。T-001以降は原則として
+1チケットにつき1つのPull Requestを作ります。チュートリアル固有の手順は各`ticket.md`に従ってください。
+
 まず**自分がどちらの方式で始めたか**を確認してください。方式でやり方が変わります。
 
 | 方式 | Pull Request | どこで作業する |
@@ -22,13 +26,19 @@
 作業はいつも main から枝分かれさせます(実務で main を直接いじらないため)。
 
 ```text
-git switch -c feature/issue-3-T-001-validation
+git switch -c feature/redmine-1-T-000-setup
 ```
 
 `switch -c` は「新しいブランチを作って、そこに移動する」。名前は
-**`feature/issue-<Issue番号>-<課題ID>-<短い名前>`**(Issue を使わない場合は `feature/<課題ID>-<短い名前>`)。
-ブランチを切るのは単なる Git 操作ではなく、「**この Issue(チケット)に着手した**」という宣言です —
-Issue が入口、ブランチが着手の合図、PR がその回答、と1本で繋がります(詳細: docs/02_作業ルール/workflow.md の「Issue 駆動」)。
+**`feature/redmine-<チケット番号>-<課題ID>-<短い名前>`**です。
+上の例では、RedmineのURLが`/issues/1`なのでチケット番号は`1`、教材の課題IDは`T-000`、
+変更内容を表す短い名前は`setup`です。自分のチケット番号・課題ID・変更内容に置き換えてください。
+
+GitHub Issuesを使う追加体験では、`feature/issue-<Issue番号>-<課題ID>-<短い名前>`を使います。
+RedmineもGitHub Issuesも使えない場合だけ、`feature/<課題ID>-<短い名前>`へ読み替えます。
+ブランチを切るのは単なる Git 操作ではなく、「**このチケットに着手した**」という宣言です。
+チケットが作業の起点、ブランチが着手の合図、PRがその回答、と1本で繋がります
+(詳細: [workflow.mdの「ブランチとコミットのルール」](workflow.md#ブランチとコミットのルール))。
 今どのブランチにいるかは `git branch` で確認できます(`*` が今の位置)。
 
 ### 2. 直して、変更を確認する
@@ -40,6 +50,12 @@ git diff
 ```
 
 赤(-)が消した行、緑(+)が足した行。**余計な変更が混じっていないか**をここで確認します。
+
+続けて、課題フォルダの`support/rubric.md`を開き、作業内容・テスト・提出物を
+commit・push前に`support/rubric.md`でセルフチェックします(「提出後」の項目は後で確認します)。
+満たしていない項目があれば修正し、checkをやり直します。
+`support/rubric.md`自体は編集しません。PR本文に関する項目は、PR作成画面で本文を書いた後、
+「Create pull request」を押す前に確認します。
 
 ### 3. コミットする(変更を1つの区切りとして記録)
 
@@ -60,7 +76,7 @@ git commit -m "T-001: 案件登録の検証ルールを仕様どおりに実装"
 ローカルのブランチを GitHub に送ります。
 
 ```text
-git push -u origin feature/T-001
+git push -u origin feature/redmine-3-T-001-validation
 ```
 
 `origin` = 自分の GitHub リポジトリ。`-u` は最初の1回だけ必要(2回目以降は `git push` だけでOK)。
@@ -69,7 +85,8 @@ git push -u origin feature/T-001
 
 1. ブラウザで自分の GitHub リポジトリを開く
 2. push 直後なら黄色い帯に **「Compare & pull request」** ボタンが出るので押す
-   (出ていなければ上部の **「Pull requests」タブ → 「New pull request」**、base=main / compare=feature/T-001 を選ぶ)
+   (出ていなければ上部の **「Pull requests」タブ → 「New pull request」**、
+   base=`main` / compare=作業ブランチを選ぶ)
 3. タイトルと本文を書く。本文は `docs/templates/fix_report.md` の項目を埋める(**原因を自分の言葉で**)
 4. 緑の **「Create pull request」** を押す
 5. これで PR 完成。CI(GitHub Actions)が動いていれば、テストの結果がこの画面に出ます
@@ -78,10 +95,11 @@ git push -u origin feature/T-001
 
 実務ではここで他の人がレビューします。この教材は一人なので、**自分がレビュアーの目で自分の PR を見ます**:
 
-1. PR の「Files changed」タブで差分をもう一度見る(support/rubric.md の観点で)
-2. debrief がある課題は、ここで開いて自分の提出と突き合わせる
-3. 問題なければ **「Merge pull request」→「Confirm merge」** で main に取り込む
-4. ローカルを最新にする: `git switch main` → `git pull`
+1. PR の「Files changed」タブで差分をもう一度見る(提出前rubricに続く2回目の確認)
+2. 問題なければ **「Merge pull request」→「Confirm merge」** で main に取り込む
+3. ローカルを最新にする: `git switch main` → `git pull --ff-only`
+4. debriefがある課題は、merge後に開いて自分の提出と突き合わせる。違いは振り返りに記録し、
+   必要な修正は別チケットで扱う
 
 ---
 
@@ -105,12 +123,26 @@ git merge --no-ff feature/T-001
 ```
 
 `--no-ff` は「マージした履歴を1つの区切りとして残す」オプション。実務の PR マージに近い形になります。
-マージの前に rubric と debrief を必ず終えること。
+rubricの「提出前」はcommit前に確認済みです。debriefがある課題は、セルフマージ後に突き合わせます。
 
 ### あとで GitHub を使いたくなったら
 
 方式 B で始めても、後から GitHub にリポジトリを作って push すれば方式 A に移れます。
 その手順は setup-guide.md か、GitHub の「新しいリポジトリ作成」画面の案内に従ってください。
+
+---
+
+## マージ後にチケットを完了する(方式A / B 共通)
+
+1. debriefがある課題は、merge後に自分の提出と突き合わせる。違いは振り返りに記録し、
+   必要な修正は別チケットで扱う
+2. `docs/templates/retrospective.md`を使い、`reports/<課題ID>_retrospective.md`へ振り返りを書く
+3. RedmineへPASS結果・Pull RequestのURL・振り返りのファイル名をコメントする
+   (方式Bでは、Pull RequestのURLの代わりにローカルmergeで完了したことを書く)
+4. Redmineのステータスを`Resolved` → `Closed`へ進める
+5. チケットフォルダの`support/rubric.md`を開き、「提出後」を確認する
+
+通常は方式Aを使います。方式Aでは、Pull Requestをmergeする前に振り返りや`Closed`へ進めないでください。
 
 ---
 
@@ -172,10 +204,11 @@ git merge --abort
 |---|---|
 | 今どのブランチにいるか | `git branch`(`*` が現在地) |
 | 変更を確認 | `git diff` / `git status` |
-| ブランチを切って移動(=着手宣言) | `git switch -c feature/issue-番号-課題ID-短い名前` |
+| Redmineのチケット用ブランチを作る | `git switch -c feature/redmine-1-T-000-setup`(例) |
+| GitHub Issue用ブランチを作る | `git switch -c feature/issue-3-T-001-validation`(追加体験) |
 | main に戻る | `git switch main` |
 | 変更を記録 | `git add .` → `git commit -m "課題ID: 説明"` |
-| GitHub に送る(方式A) | `git push -u origin feature/課題ID` |
+| GitHub に送る(方式A) | `git push -u origin feature/redmine-1-T-000-setup`(例) |
 | 間違えた、直前の変更を捨てたい | `git checkout -- ファイル名`(そのファイルを最後のコミットに戻す) |
 | **マージをやめて衝突前に戻す(安全弁)** | **`git merge --abort`**(コンフリクトで迷ったら必ずこれ。`reset --hard` は使わない) |
 

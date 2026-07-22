@@ -36,7 +36,15 @@ ul, ol { padding-left: 22px; }
 
 <h2>0. 使う場所を決める</h2>
 <p>作業は、必ず自分のコピーで行います。配布元や master 原本で課題を解かないでください。</p>
-<pre>git clone https://github.com/&lt;自分のアカウント&gt;/&lt;リポジトリ名&gt;.git</pre>
+<p>GitHubを使う場合は、次の順で自分用リポジトリを作ります。</p>
+<ol>
+<li>ブラウザで、この教材の配布元GitHubリポジトリを開く</li>
+<li><strong>Use this template → Create a new repository</strong>を選ぶ</li>
+<li>Ownerに自分のアカウント、Repository nameに任意の名前を指定し、<strong>Create repository</strong>を押す</li>
+<li>作成された自分用リポジトリをcloneする</li>
+</ol>
+<pre>git clone https://github.com/&lt;自分のアカウント&gt;/&lt;リポジトリ名&gt;.git
+cd &lt;リポジトリ名&gt;</pre>
 <p>GitHub を使えない場合だけ、ZIP を展開してローカルリポジトリ化します。</p>
 <pre>git init -b main
 git add .

@@ -32,6 +32,25 @@ pack: php
 
 これは**設計基礎編**の3段階目です。D-023で決めたカラムを、そのまま引き継いで使ってください。
 
+## 着手時の作業branch
+
+課題内容を確認したら、ファイルを変更する前に次の順で着手します。
+
+1. Redmineで`PractiCase Ticket ID`が`D-024`のチケットを開き、担当者を自分にして、
+   見積をコメントし、ステータスを`New` → `In Progress`にする
+2. VS Codeで教材フォルダを開いた状態のターミナルから、mainを更新して作業branchを作る
+
+   ```text
+   git switch main
+   git pull --ff-only
+   git status --short
+   git switch -c feature/redmine-<チケット番号>-D-024-member-management-types
+   ```
+
+`<チケット番号>`はRedmineのURL末尾の数字です。URLが`/issues/3`なら、branch名は
+`feature/redmine-3-D-024-member-management-types`です。`git status --short`に何か表示された場合は、branchを作る前に変更内容を確認します。
+この後の課題固有手順に同じRedmine操作がある場合は、繰り返しません。
+
 ## やること
 
 1. D-023の `reports/D-023_columns_note.md` を見返し、自分が決めたカラムを確認する
@@ -56,7 +75,7 @@ D-022・D-023と同じく、以下は扱いません。
 
 ## 完了条件
 
-- `check D-024` が PASS
+- `docker compose exec app php tools/check.php D-024` が PASS
 - 部署名・氏名・メールが文字列型として扱われている
 - 状態が文字列またはENUM相当として扱われている
 - 部署への参照が数値型として扱われている
@@ -68,3 +87,23 @@ D-022・D-023と同じく、以下は扱いません。
 次は D-025(NULLを決める)— ここで決めた型それぞれに、必須か任意かを考えます。
 
 > 詰まったら `support/hints.md`。段階的に4つ用意しています。
+
+## 提出と完了(共通手順)
+
+この節は、上の課題固有手順を提出までつなぐ補足です。手順1は作業前、手順2以降はcheckがPASSした後に行います。
+
+1. Redmineでこのチケットを開き、担当者を自分にして、見積をコメントし、ステータスを
+   `New` → `In Progress`にする(本文ですでに実施している場合は繰り返さない)
+2. commit・pushする前に`support/rubric.md`の「提出前」を確認する。満たしていない項目があれば修正し、checkをやり直す
+3. 変更をcommit・pushし、Pull Requestを作る。この時点ではまだmergeしない
+4. Pull Requestをmergeする
+5. `support/debrief/`がある課題は、Pull Requestをmergeした後に開いて自分の提出と突き合わせる。
+   突き合わせで見つけた違いは振り返りに記録し、必要な修正は別チケットで扱う
+   その結果を振り返りに書く。本文でファイル名の指定がなければ
+   `reports/D-024_retrospective.md`を使用する
+6. RedmineへPASS結果・Pull RequestのURL・振り返りのファイル名をコメントし、
+   ステータスを`Resolved` → `Closed`にする
+7. Redmineを`Closed`にした後、`support/rubric.md`の「提出後」を確認する
+
+> **Redmineが使えないときだけ**: `ticket.md`のfront matterで進捗を管理し、
+> branch名は`feature/D-024-<短い名前>`へ読み替えます。Redmineとの自動同期はありません。

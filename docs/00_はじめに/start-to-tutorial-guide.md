@@ -23,10 +23,17 @@
 
 作業は、必ず自分のコピーで行います。配布元や master 原本で課題を解かないでください。
 
-GitHub を使う場合は、配布元リポジトリから自分のリポジトリを作り、clone します。
+GitHubを使う場合は、次の順で自分用リポジトリを作ります。
+
+1. ブラウザで、この教材の配布元GitHubリポジトリを開く
+2. **Use this template → Create a new repository**を選ぶ
+3. Ownerに自分のアカウント、Repository nameに任意の名前を指定し、
+   **Create repository**を押す
+4. 作成された自分用リポジトリをcloneする
 
 ```text
 git clone https://github.com/<自分のアカウント>/<リポジトリ名>.git
+cd <リポジトリ名>
 ```
 
 GitHub を使えない場合だけ、ZIP を展開してローカルリポジトリ化します。
