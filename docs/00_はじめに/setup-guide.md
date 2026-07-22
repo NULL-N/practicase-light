@@ -49,11 +49,15 @@ git --version
 この教材は、コード・Pull Request・レビュー・CIを実務と同じ流れで体験するため、GitHubの利用を前提とします。
 
 1. [GitHub](https://github.com/signup)の無料アカウントを作る
-2. 配布元リポジトリで **Use this template → Create a new repository** を選ぶ
-3. 作成した自分のリポジトリを clone する
+2. ブラウザで、この教材の配布元GitHubリポジトリを開く
+3. **Use this template → Create a new repository**を選ぶ
+4. Ownerに自分のアカウント、Repository nameに任意の名前を指定し、
+   **Create repository**を押す
+5. 作成された自分用リポジトリのURLを使ってcloneする
 
 ```text
 git clone https://github.com/<自分のアカウント>/<リポジトリ名>.git
+cd <リポジトリ名>
 ```
 
 作成したリポジトリは自分専用です。壊しても配布元には影響しないので、安心して実験できます。

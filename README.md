@@ -27,21 +27,29 @@ Docker Composeが固定済みのイメージを取得・起動します。
 
 ## 導入手順
 
-1. 自分の作業用リポジトリをcloneし、VS Codeでリポジトリの一番上を開きます
+1. [PractiCase Light](https://github.com/NULL-N/practicase-light)を開き、
+   **Use this template → Create a new repository**を選びます。Ownerに自分のアカウント、
+   Repository nameに任意の名前を指定して、**Create repository**を押します
+
+2. 作成した自分用リポジトリをcloneし、VS Codeでリポジトリの一番上を開きます
 
    ```text
    git clone https://github.com/<自分のアカウント>/<リポジトリ名>.git
    cd <リポジトリ名>
+   code .
    ```
 
-2. アプリ、PCP、Redmineを起動し、アプリのDBを初期化します
+   `code`コマンドを利用できない場合は、VS Codeの「ファイル → フォルダーを開く」から
+   cloneしたフォルダーを選びます。
+
+3. アプリ、PCP、Redmineを起動し、アプリのDBを初期化します
 
    ```text
    docker compose --profile redmine up -d
    docker compose exec app php tools/init-db.php
    ```
 
-3. PowerShellでRedmineを初期設定し、Lightの全33課題を投入します
+4. PowerShellでRedmineを初期設定し、Lightの全33課題を投入します
 
    ```powershell
    Get-Content -Raw tools/redmine/bootstrap.rb | docker compose --profile redmine exec -T redmine sh -c 'SECRET_KEY_BASE="$REDMINE_SECRET_KEY_BASE" bin/rails runner -'
@@ -51,14 +59,14 @@ Docker Composeが固定済みのイメージを取得・起動します。
    Git Bashのコマンドや停止・再初期化手順は
    [Redmine運用ガイド](docs/02_作業ルール/redmine-guide.md)にあります。
 
-4. ブラウザで動作を確認します
+5. ブラウザで動作を確認します
 
    | 開く場所 | 役割 |
    |---|---|
    | `http://127.0.0.1:8280` | Redmine。チケット選択、担当、進捗、コメント |
    | `http://localhost:8180` | PractiCaseアプリ。症状の再現と修正後の確認 |
 
-5. [導入からチュートリアル2完了までの手順書](docs/00_はじめに/start-to-tutorial-guide.md)を開き、
+6. [導入からチュートリアル2完了までの手順書](docs/00_はじめに/start-to-tutorial-guide.md)を開き、
    `T-000` → `tutorial` → `tutorial-2`の順で進めます
 
 ## 使う場所と役割
